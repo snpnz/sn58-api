@@ -141,7 +141,7 @@
 				die(err('Failed update login data', array('message' => $mysqli->error, 'sql' => $sql)));
 			}
 
-			$exp = time() + (86400 * 90);
+			$exp = time() + (86400 * 365);
 
 			$authdata = array(
 				'id' => $user['id'],
