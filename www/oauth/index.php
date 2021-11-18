@@ -100,6 +100,7 @@
         );
 
         setcookie("snpnz-auth", json_encode($authdata), $res['expires_at'], "/", $_SERVER['HTTP_HOST']);
+        setcookie("snpnz-auth", json_encode($authdata), $res['expires_at'], "/");
         setcookie("snpnz-auth", json_encode($authdata), $res['expires_at'], "/", 'localhost:3000');
 
         header('Location: '.$_GET['redir']."?token=".$res['access_token']);

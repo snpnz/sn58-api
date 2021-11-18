@@ -150,6 +150,7 @@
 			);
 
 			setcookie("snpnz-auth", json_encode($authdata), $exp, "/", $_SERVER['HTTP_HOST']);
+			setcookie("snpnz-auth", json_encode($authdata), $exp, "/");
 
 			exit(jout($authdata));
 
