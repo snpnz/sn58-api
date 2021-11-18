@@ -1,0 +1,9 @@
+/node_modules
+/.idea
+/logs
+/tmp
+/www/vendor
+/www/.idea
+composer.lock
+.env
+www/_config.php

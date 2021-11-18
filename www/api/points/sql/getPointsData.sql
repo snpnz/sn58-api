@@ -1,0 +1,13 @@
+SELECT
+    `id`,
+    `name`,
+    `point`,
+    `description`,
+    `code`,
+    `created_at`,
+    `updated_at`,
+    `id_author`
+FROM
+    `points`
+WHERE
+    1
