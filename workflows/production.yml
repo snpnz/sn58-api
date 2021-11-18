@@ -1,0 +1,40 @@
+name: Deploy backend sn58.tk
+on:
+  push:
+    branches: [ main ]
+jobs:
+  deploy:
+    name: Deploy to sn58.tk
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2.1.0
+      with:
+        fetch-depth: 2
+    - name: Prepare
+      run: |
+        echo "ARTIFACT_NAME=backend_$(date +'%Y-%m-%d')-git.zip" >> $GITHUB_ENV
+        echo $ARTIFACT_NAME
+        
+    - name: Composer
+      working-directory: ./www/
+      run: composer install --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
+
+    - name: Zipping
+      working-directory: ./www/
+      run: zip -r ../${{ env.ARTIFACT_NAME }} *
+
+    - name: Try FTP Login
+      run: curl ftp://${{env.FTP_SERVER}}/ --user ${{env.FTP_USER}}:${{ secrets.FTP_PASS }}
+      env:
+        FTP_SERVER: ftp.fednik.ru
+        FTP_USER: snpnz@fednik.ru
+        
+    - name: Send to ftp
+      run: curl -T ${{ env.ARTIFACT_NAME }} -u ${{ env.FTP_USER }}:${{ secrets.FTP_PASS }} ftp://${{ env.FTP_SERVER }}/${{ env.REMOTE_FOLDER }}
+      env:
+        FTP_SERVER: ftp.fednik.ru
+        FTP_USER: snpnz@fednik.ru
+        REMOTE_FOLDER: deploy/
+        
+    - name: Unzip remote
+      run: curl -i -X GET http://sn58.tk/unzip.php?name=${{ env.ARTIFACT_NAME }}

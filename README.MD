@@ -1,5 +1,14 @@
-[![Backend heroku deploy](https://github.com/telecomproviderservice/snpnz/actions/workflows/backendHeroku.yml/badge.svg)](https://github.com/telecomproviderservice/snpnz/actions/workflows/backendHeroku.yml)
+`www/_config.php` example:
 
-😊
-
-SnPnz
+```php
+<?php
+    return array(
+        'MYSQL_HOST'=> 'mysql',
+        'MYSQL_ROOT_PASSWORD'=> 'root',
+        'MYSQL_DATABASE'=> 'snpnz',
+        'MYSQL_USER'=> 'snpnz',
+        'MYSQL_PASSWORD'=> 'snpnz',
+        'MIGRATOR_USER'=> 'migrator',
+        'MIGRATOR_PASSWORD'=> '1111'
+    );
+```
