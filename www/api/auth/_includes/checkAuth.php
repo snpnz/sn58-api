@@ -1,7 +1,23 @@
 <?php
 
 	function checkAuth() {
-		$cookie = isset($_SERVER['HTTP_AUTHORIZATION']) ? $_SERVER['HTTP_AUTHORIZATION'] : $_COOKIE["snpnz-auth"];
+
+	
+		if (isset($_GET['token']) && isset($_GET['expiration']) && isset($_GET['id'])) {
+			$cookie = json_encode(array(
+				"token" => $_GET['token'],
+				"expiration" => $_GET['expiration'],
+				"id" => $_GET['id']
+			));
+
+			print_r($cookie);
+			die();
+		} else {
+			$cookie = isset($_SERVER['HTTP_AUTHORIZATION']) && !empty($_SERVER['HTTP_AUTHORIZATION']) ? $_SERVER['HTTP_AUTHORIZATION'] : $_COOKIE["snpnz-auth"];
+
+		}
+
+		
 		if (!isset($cookie) || empty($cookie)) {
 			return array('success' => false, 'reason' => 'wrong cookie');
 		}
@@ -11,7 +27,10 @@
 		if (!isset($cookieData) || !isset($cookieData['token'])) {
 			return array('success' => false, 'reason' => 'wrong cookieData', 'data' => $cookieData);
 		}
-		require($_SERVER['DOCUMENT_ROOT'].'/_includes/db.php');
+
+		include_once($_SERVER['DOCUMENT_ROOT'].'/_includes/db.php');
+		global $mysqli;
+		
 		$sql = "SELECT
 			id_user, token
 			FROM user_tokens

@@ -1,5 +1,4 @@
 <?php 
-require_once('cors.php');
 require_once('config.php');
 
 $host = getConf('MYSQL_HOST');
