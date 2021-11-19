@@ -1,7 +1,7 @@
 <?php
 
 	function checkAuth() {
-		$cookie = isset($_GET['token']) ? $_GET['token'] : $_COOKIE["snpnz-auth"];
+		$cookie = isset($_SERVER['HTTP_AUTHORIZATION']) ? $_SERVER['HTTP_AUTHORIZATION'] : $_COOKIE["snpnz-auth"];
 		if (!isset($cookie) || empty($cookie)) {
 			return array('success' => false, 'reason' => 'wrong cookie');
 		}
