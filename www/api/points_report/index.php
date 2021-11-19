@@ -44,8 +44,11 @@
 			$sql = getSql($file, array('id_user' => $uid));
 			$q = $mysqli->query($sql);
 			if (!$q) { die(err('Error reading user data', array('message' => $mysqli->error, 'sql' => $sql, 'file'=>$file))); }
-			$r = $q->fetch_assoc();
-			exit(data($r));
+			$res = array();
+			while($r = $q->fetch_assoc()) {
+				$res[] = $r;
+			}
+			exit(data($res));
 
 			break;
 			case 'POST':

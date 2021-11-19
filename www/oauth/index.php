@@ -100,7 +100,8 @@
         );
 
         setcookie("snpnz-auth", json_encode($authdata), $res['expires_at'], "/", $_SERVER['HTTP_HOST']);
-        setcookie("snpnz-auth", json_encode($authdata), $res['expires_at'], "/");
-        setcookie("snpnz-auth", json_encode($authdata), $res['expires_at'], "/", 'localhost:3000');
+        setcookie("snpnz-auth", json_encode($authdata), $res['expires_at'], '/', $_SERVER['HTTP_HOST']);
+        setcookie("snpnz-auth", json_encode($authdata), $res['expires_at'], '/', 'localhost:3000');
+        setcookie("snpnz-auth", json_encode($authdata), $res['expires_at'], '/', 'localhost');
 
-        header('Location: '.$_GET['redir']."?token=".$res['access_token']);
+        header('Location: '.$_GET['redir']."?token=".$res['access_token']."&expiration=".$res['expires_at']."&id=".$user_id);
