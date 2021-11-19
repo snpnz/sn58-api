@@ -13,27 +13,23 @@
   <body>
     <section class="container">
       <header class="d-flex justify-content-between align-items-center my-4">
-    <h1>
-    
-      Список точек
-    </h1>
-    
-    <div>
-    <a type="button" class="btn btn-primary btn-sm" href="edit.php">Добавить</a>
-    </div>
-</header>
+          <h1>Список точек</h1>
+          <div>
+            <a type="button" class="btn btn-primary btn-sm" href="edit.php">Добавить</a>
+          </div>
+      </header>
     <div class="list-group">
       <?php
         include_once('../_includes/db.php');
         $q = $mysqli->query("SELECT * FROM points");
         while($r = $q -> fetch_assoc()){
-          echo '<a href="#" class="list-group-item list-group-item-action">
+          echo '<a href="edit.php?id='.$r['id'].'" id="point'.$r['id'].'" class="list-group-item list-group-item-action">
           <div class="d-flex w-100 justify-content-between">
             <h5 class="mb-1">'.$r['name'].'</h5>
-            <small>'.$r['created_at'].'</small>
+            <small>'.($r['updated_at'] ? $r['updated_at'] : $r['created_at']).'</small>
           </div>
           <p class="mb-1">'.$r['description'].'</p>
-          <small>'.$r['updated_at'].'</small>
+          <small>https://sn58.tk/?code='.$r['code'].'</small>
         </a>';
         }
       ?>

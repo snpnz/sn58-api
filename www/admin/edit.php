@@ -22,8 +22,19 @@ include_once('../_includes/keeper_admin.php')
             $r = $q -> fetch_assoc();
         }
 
+        if (isset($_POST['del'])) {
+            $q = $mysqli->query("DELETE FROM `points` WHERE id=".intval($_POST['del'])."");
+            
+            if(!$q) {
+                die('<div class="alert alert-danger m-5" role="alert">'.$mysqli->error.'</div>');
+            } else {
+                die('<div class="alert alert-success m-5" role="alert">Удалено <a href="/admin/" class="alert-link">Перейти к списку</a></div>');
+            }
+            
+        }
+
         if (isset($_POST['name']) && isset($_POST['code']) && isset($_POST['description']) && isset($_POST['point'])) {
-            $q = $mysqli->query("".( isset($_GET['id']) ? "UPDATE" : "INSER INTO" )."
+            $q = $mysqli->query("".( isset($_GET['id']) ? "UPDATE" : "INSERT INTO" )."
                 `points`
             SET
                 `name` = '".$mysqli->real_escape_String(trim($_POST['name']))."',
@@ -36,17 +47,22 @@ include_once('../_includes/keeper_admin.php')
             ");
             
             if(!$q) {
-                die('<div class="alert alert-danger" role="alert">'.$mysqli->error.'</div>');
+                die('<div class="alert alert-danger m-5" role="alert">'.$mysqli->error.'</div>');
             }
 
             if($mysqli->affected_rows === 1) {
-                die('<div class="alert alert-success" role="alert">'.(isset($mysqli->insert_id)?'Добавлено':'Сохранено').'. <a href="/admin/#point'.(isset($mysqli->insert_id)?$mysqli->insert_id:$_GET['id']).'" class="alert-link">Перейти к списку</a></div>');
+                die('<div class="alert alert-success m-5" role="alert">'.(!empty($mysqli->insert_id)?'Добавлено':'Сохранено').'. <a href="/admin/#point'.(isset($mysqli->insert_id)?$mysqli->insert_id:$_GET['id']).'" class="alert-link">Перейти к списку</a></div>');
             }
             
         }
     ?>
     <section class="container">
-        <h1>Добавление точки</h1>
+    <header class="d-flex justify-content-between align-items-center my-4">
+          <h1><?=(isset($_GET['id'])?'Редактирование':'Добавление')?> точки</h1>
+          <div>
+            <a type="button" class="btn btn-outline-primary btn-sm" href="/admin/">К списку</a>
+          </div>
+      </header>
         <form method="post">
             <div class="mb-3">
                 <label for="name" class="form-label">Название</label>
@@ -59,6 +75,28 @@ include_once('../_includes/keeper_admin.php')
                 value="<?=(isset($_GET['id'])?$r['code']:'')?>"
                 aria-label="gen" aria-describedby="codebtn" id="code" name="code">
                 <button class="btn btn-outline-secondary" type="button" id="codebtn" <?=(isset($_GET['id'])?"disabled":'')?> >Сгенерировать</button>
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                QR-Код
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">QR-КОД</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <img id="img" src="https://chart.apis.google.com/chart?cht=qr&chs=350x350&chl=https://sn58.tk/?code=<?=(isset($_GET['id'])?$r['code']:'')?>">
+                        <div class="mt-3">
+                            <input type="text" readonly class="form-control" id="copyqr" value="https://sn58.tk/?code=<?=(isset($_GET['id'])?$r['code']:'')?>">
+                            <div id="nameinfo" class="form-text">Ссылка для генирации кода в других программах</div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label">Описание</label>
@@ -77,8 +115,9 @@ include_once('../_includes/keeper_admin.php')
                 >
                 <div id="map" style="width: 100%; height: 400px"></div>
             </div>
-            <button type="submit" class="btn btn-primary">Сохранить</button>
+            <button type="submit" class="btn btn-primary btn-block w-100">Сохранить</button>
         </form>
+        <?=(isset($_GET['id'])?'<form method="post" onsubmit="ondel" class="mt-2 mb-6"><input type="hidden" name="del" value="'.intval($_GET['id']).'"><button type="submit" class="btn btn-danger">Удалить</button></form>':'')?>
     </div>
 
     <!-- Optional JavaScript; choose one of the two! -->
@@ -118,6 +157,8 @@ include_once('../_includes/keeper_admin.php')
                 retVal += charset.charAt(Math.floor(Math.random() * n));
             }
             code.value = retVal;
+            img.src= 'https://chart.apis.google.com/chart?cht=qr&chs=350x350&chl=https://sn58.tk/?code=' + retVal;
+            copyqr.value= 'https://sn58.tk/?code=' + retVal;
         }
 
         codebtn.onclick = generatePassword;
@@ -134,7 +175,10 @@ include_once('../_includes/keeper_admin.php')
             }
         }
 
-        <?=(isset($_GET['id'])?"map.panTo(new L.LatLng(".$r['point'].")); marker = new L.marker(new L.LatLng(".$r['point'].")); marker.addTo(map);":'generatePassword()')?>
+        <?=(isset($_GET['id'])?"map.panTo(new L.LatLng(".$r['point'].")); marker = new L.marker(new L.LatLng(".$r['point'].")); marker.addTo(map);":'generatePassword();')?>
+        function ondel(event) {
+            !confirm('Удалить?') && event.preventDefault();
+        }
     </script>
   </body>
 </html>
