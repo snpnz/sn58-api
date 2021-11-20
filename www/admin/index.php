@@ -1,3 +1,6 @@
+<?php
+include_once('../_includes/keeper_admin.php')
+?>
 <!doctype html>
 <html lang="ru">
   <head>

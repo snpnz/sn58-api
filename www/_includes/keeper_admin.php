@@ -1,14 +1,29 @@
 <?php
 
+function goauth(){
+	if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')   
+	$url = "https://";   
+else  
+	$url = "http://";   
+// Append the host(domain name, ip) to the URL.   
+$url.= $_SERVER['HTTP_HOST'];  
+
+$dom = $url;
+
+// Append the requested resource location to the URL   
+$url.= $_SERVER['REQUEST_URI'];    
+
+$redir = $dom."/oauth/?redir=".$url;
+header("Location: https://www.strava.com/oauth/authorize?client_id=73436&response_type=code&approval_prompt=auto&redirect_uri=".$redir);
+
+}
+
 	if (isset($_GET['token']) && isset($_GET['expiration']) && isset($_GET['id'])) {
 		$cookie = json_encode(array(
 			"token" => $_GET['token'],
 			"expiration" => $_GET['expiration'],
 			"id" => $_GET['id']
 		));
-
-		print_r($cookie);
-		die();
 	} else {
 		$cookie = isset($_SERVER['HTTP_AUTHORIZATION']) && !empty($_SERVER['HTTP_AUTHORIZATION']) ? $_SERVER['HTTP_AUTHORIZATION'] : $_COOKIE["snpnz-auth"];
 
@@ -16,12 +31,14 @@
 
 	
 	if (!isset($cookie) || empty($cookie)) {
-		return array('success' => false, 'reason' => 'wrong cookie');
+		goauth();
+		die('wrong cookie');
 	}
 	
 	$cookieData = json_decode($cookie, true);
 	
 	if (!isset($cookieData) || !isset($cookieData['token'])) {
+		goauth();
 		die('wrong cookieData');
 	}
 
@@ -38,21 +55,7 @@
 	}
 
 	if ($q->num_rows === 0) {
-		
-		if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')   
-				$url = "https://";   
-		else  
-				$url = "http://";   
-		// Append the host(domain name, ip) to the URL.   
-		$url.= $_SERVER['HTTP_HOST'];  
-		
-		$dom = $url;
-		
-		// Append the requested resource location to the URL   
-		$url.= $_SERVER['REQUEST_URI'];    
-			
-		$redir = $dom."/oauth/?redir=".$url;
-		header("Location: https://www.strava.com/oauth/authorize?client_id=73436&response_type=code&approval_prompt=auto&scope=activity:read&redirect_uri=".$redir);
+		goauth();
 		exit();
 		return die('bad token or user');
 	}
@@ -60,4 +63,38 @@
 	$r = $q -> fetch_row();
 	
 	$uid = $r[0];
+
+
+	$sql = "SELECT name, surname, superman FROM users WHERE id={$uid} LIMIT 1";
+	$q = $mysqli->query($sql);
+	if (!$q) {
+		die('Error reading user info/ '. $mysqli->error);
+	}
+	$res = $q -> fetch_assoc();
+
+	if(!$res['superman']) {
+		die('<div class="alert alert-dark m-5" role="alert">
+		You are not superman...
+	  </div>');
+	}
+
+	?>
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/admin/">Sn58 admin</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarText">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/admin/">Точки</a>
+        </li>
+      </ul>
+      <span class="navbar-text">
+	  <?=$res['name']?> <?=$res['surname']?>
+      </span>
+    </div>
+  </div>
+</nav>
 	
