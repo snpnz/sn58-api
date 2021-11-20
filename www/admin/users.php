@@ -30,21 +30,20 @@ include_once('../_includes/keeper_admin.php')
           $userres = $q -> fetch_assoc();
 
 
-echo '<div class="card">
-<h5 class="card-header">Пользователь</h5>
-<div class="card-body">
-<img src="'.$userres['photo'].'">
-  <h5 class="card-title">'.$userres['name'].' '.$userres['surname'].'</h5>
-</div>
-</div>';
+          echo '<div class="card">
+          <h5 class="card-header">Пользователь</h5>
+          <div class="card-body">
+          <img src="'.$userres['photo'].'">
+            <h5 class="card-title">'.$userres['name'].' '.$userres['surname'].'</h5>
+          </div>
+          </div>';
 
           $q = $mysqli->query("SELECT points.*, points_reports.*  
           FROM points_reports LEFT JOIN points ON points_reports.id_point = points.id
           WHERE points_reports.id_user=".$_GET['id']);
-         if(!$q) {
-           die($mysqli->error);
-         }
-         echo "<h3 class=\"mt-4\">Отметки</h3>";
+          if(!$q) { die($mysqli->error);}
+         
+          echo "<h3 class=\"mt-4\">Отметки</h3>";
          while($r = $q -> fetch_assoc()){
             echo '<a href="#checkPoint'.$r['id'].'" id="checkPoint'.$r['id'].'" class="list-group-item list-group-item-action">
             <div class="d-flex w-100 justify-content-between">
@@ -55,7 +54,11 @@ echo '<div class="card">
           </a>';
           }
         } else {
-          $q = $mysqli->query("SELECT users.*, MAX(points_reports.created_at), points.name as point_name  FROM users LEFT JOIN points_reports ON points_reports.id_user=users.id LEFT JOIN points ON points_reports.id_point = points.id GROUP BY users.id, points.name");
+          $q = $mysqli->query("
+          SELECT users.*, points.name as point_name, MAX(points_reports.created_at) 
+          FROM users 
+          LEFT JOIN points_reports ON points_reports.id_user=users.id 
+          LEFT JOIN points ON points_reports.id_point = points.id GROUP BY users.id");
           if(!$q) {
             die($mysqli->error);
           }
