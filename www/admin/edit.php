@@ -37,10 +37,11 @@ include_once('../_includes/keeper_admin.php')
             $q = $mysqli->query("".( isset($_GET['id']) ? "UPDATE" : "INSERT INTO" )."
                 `points`
             SET
-                `name` = '".$mysqli->real_escape_String(trim($_POST['name']))."',
-                `point` = '".$mysqli->real_escape_String(trim($_POST['point']))."',
-                `description` = '".$mysqli->real_escape_String(trim($_POST['description']))."',
-                `code` = '".$mysqli->real_escape_String(trim($_POST['code']))."',
+                `id_point_group` = ".(intval($_POST['id_point_group']) > 0 ? intval($_POST['id_point_group']) : 'NULL').",
+                `name` = '".$mysqli->real_escape_string(trim($_POST['name']))."',
+                `point` = '".$mysqli->real_escape_string(trim($_POST['point']))."',
+                `description` = '".$mysqli->real_escape_string(trim($_POST['description']))."',
+                `code` = '".$mysqli->real_escape_string(trim($_POST['code']))."',
                 ".( isset($_GET['id']) ? "`updated_at` = NOW(),": "`created_at` = NOW()," )."
                 `id_author` = '".$uid."'
             ".( isset($_GET['id']) ? "WHERE id=".intval($_GET['id']) : "" )."
@@ -64,11 +65,37 @@ include_once('../_includes/keeper_admin.php')
           </div>
       </header>
         <form method="post">
-            <div class="mb-3">
-                <label for="name" class="form-label">Название</label>
-                <input type="text" class="form-control" id="name" name="name" aria-describedby="nameinfo"
-                required autofocus value="<?=(isset($_GET['id'])?$r['name']:'')?>">
-                <div id="nameinfo" class="form-text"></div>
+            <div class="row mb-3">
+                <div class="col-sm-8">
+                    <label for="name" class="form-label">Название</label>
+                    <input type="text" class="form-control" id="name" name="name" aria-describedby="nameinfo"
+                    required autofocus value="<?=(isset($_GET['id'])?$r['name']:'')?>">
+                    <div id="nameinfo" class="form-text"></div>
+                </div>
+                <div class="col-sm-4">
+                <a href="groups.php" id="nameinfo"  class="form-text" style="float: right">управление</a>
+                    <label for="name" class="form-label">Группа</label>
+                    <select
+                        class="form-control"
+                        id="id_point_group"
+                        name="id_point_group"
+                        value="<?=(isset($_GET['id'])?$r['id_point_group']:'')?>"
+                    >
+                        <option value="0">- без группы -</option>
+                        <?php
+                                      $q = $mysqli->query("
+                                      SELECT
+                                        id, name
+                                      FROM points_groups ORDER BY created_at DESC");
+                                      if(!$q) { die($mysqli->error);}
+                                     
+                              
+                                     while($o = $q -> fetch_assoc()){
+                                         echo '<option value="'.$o['id'].'" '.($o['id'] === $r['id_point_group'] ? 'selected': '').'>'.$o['name'].'</option>';
+                                     }
+                        ?>
+                    </select>
+                </div>
             </div>
             <div class="input-group mb-3">
                 <input type="text" class="form-control" readonly

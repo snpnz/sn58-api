@@ -22,6 +22,9 @@
          *             value={
          *               "data":{
          *                 "id":"4",
+		 * 				   "id_point_group":"1",
+		 * 				   "group_name":"1",
+		 * 				   "group_description":"1",
          *                 "login":"sn58",
          *                 "name":"\u0421\u0435\u0440\u0435\u0431\u0440\u044f\u043d\u0430\u044f",
          *                 "surname":"\u041d\u0438\u0442\u044c",

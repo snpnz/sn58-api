@@ -84,7 +84,7 @@ if(!$q) { die($mysqli->error);}
           SELECT users.*, points.name as point_name, MAX(points_reports.created_at) 
           FROM users 
           LEFT JOIN points_reports ON points_reports.id_user=users.id 
-          LEFT JOIN points ON points_reports.id_point = points.id GROUP BY users.id");
+          LEFT JOIN points ON points_reports.id_point = points.id GROUP BY users.id, points.name");
           if(!$q) {
             die($mysqli->error);
           }

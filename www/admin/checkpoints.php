@@ -29,10 +29,12 @@ include_once('../_includes/keeper_admin.php')
             users.*,
             points.*,
             points_reports.*,
-            CONCAT_WS(' ', users.name, users.surname) as user
+            CONCAT_WS(' ', users.name, users.surname) as user,
+            points_groups.name as groupname
           FROM points_reports
             LEFT JOIN points ON points_reports.id_point = points.id
             LEFT JOIN users ON users.id = points_reports.id_user
+            LEFT JOIN points_groups ON points_groups.id = points.id_point_group
           ORDER BY points_reports.created_at DESC");
           if(!$q) { die($mysqli->error);}
          
@@ -44,6 +46,7 @@ include_once('../_includes/keeper_admin.php')
             <div style="flex-grow: 2" class="p-2">
               <div class="d-flex w-100 justify-content-between">
                 <span class="mb-0"><b>'.$r['user'].'</b> отметился на точке <b>'.$r['name'].'</b></span>
+                <small>'.($r['groupname']).'</small>
                 <small>'.($r['created_at']).'</small>
               </div>
               <p class="mb-1">

@@ -11,32 +11,46 @@ include_once('../_includes/keeper_admin.php')
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
-    <title>sn58.tk admin</title>
+    <title>sn58.tk checkpoints</title>
   </head>
   <body>
     <section class="container">
       <header class="d-flex justify-content-between align-items-center my-4">
-          <h1>Список точек</h1>
+          <h1>Группы точек</h1>
           <div>
-            <a type="button" class="btn btn-primary btn-sm" href="edit.php">Добавить</a>
+            <a href="group.php" class="btn btn-primary">Добавить</a>
           </div>
       </header>
     <div class="list-group">
       <?php
         include_once('../_includes/db.php');
-        $q = $mysqli->query("SELECT points.*, points_groups.name as groupname FROM points 
-        LEFT JOIN points_groups ON points_groups.id = points.id_point_group");
-        while($r = $q -> fetch_assoc()){
-          echo '<a href="edit.php?id='.$r['id'].'" id="point'.$r['id'].'" class="list-group-item list-group-item-action">
-          <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">'.$r['name'].'</h5>
-            <small class="text-primary">'.($r['groupname']).'</small>
-            <small>'.($r['updated_at'] ? $r['updated_at'] : $r['created_at']).'</small>
-          </div>
-          <p class="mb-1">'.$r['description'].'</p>
-          <small>https://sn58.tk/?code='.$r['code'].'</small>
+          $q = $mysqli->query("
+          SELECT
+            points_groups.*,
+            GROUP_CONCAT(points.name) as points
+          FROM points_groups
+            LEFT JOIN points ON points_groups.id = points.id_point_group
+            GROUP BY points_groups.id
+          ORDER BY points_groups.created_at DESC");
+          if(!$q) { die($mysqli->error);}
+         
+  
+         while($r = $q -> fetch_assoc()){
+          echo '<a href="/admin/group.php?id='.$r['id'].'" id="group'.$r['id'].'"
+          class="list-group-item list-group-item-action d-flex align-items-center">
+            <div style="flex-grow: 2" class="p-2">
+              <div class="d-flex w-100 justify-content-between">
+                <span class="mb-0"><b>'.$r['name'].'</b></span>
+                <small>'.($r['created_at']).'</small>
+              </div>
+              <p class="mb-1">
+                <em>'.$r['description'].'</em>
+                <br>
+                <small><small>'.$r['points'].'</small></small>
+              </p>
+            </div>
         </a>';
-        }
+          }
       ?>
       </div>
 </section>

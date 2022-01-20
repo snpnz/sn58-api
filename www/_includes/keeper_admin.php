@@ -96,6 +96,9 @@ header("Location: https://www.strava.com/oauth/authorize?client_id=73436&respons
 		<li class="nav-item">
           <a class="nav-link" aria-current="page" href="/admin/checkpoints.php">Отметки</a>
         </li>
+		<li class="nav-item">
+          <a class="nav-link" aria-current="page" href="/admin/groups.php">Группы точек (маршруты)</a>
+        </li>
       </ul>
       <span class="navbar-text">
 	  <?=$res['name']?> <?=$res['surname']?>
