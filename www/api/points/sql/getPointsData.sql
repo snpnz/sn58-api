@@ -14,3 +14,4 @@ FROM
     `points` LEFT JOIN `points_groups` ON points_groups.id = points.id_point_group
 WHERE
     1
+    ORDER BY points.id_point_group, points.created_at
