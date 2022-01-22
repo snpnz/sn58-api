@@ -40,8 +40,12 @@
 		 */
 
 
-			$file = __DIR__.'/sql/getPointsReport.sql';
-			$sql = getSql($file, array('id_user' => $uid));
+			$file1 = __DIR__.'/sql/getPointsReport.sql';
+			$file2 = __DIR__.'/sql/getAllPointsReports.sql';
+			$sql = !isset($_GET['all'])
+				? getSql($file1, array('id_user' => $uid))
+				: getSql($file2);
+
 			$q = $mysqli->query($sql);
 			if (!$q) { die(err('Error reading user data', array('message' => $mysqli->error, 'sql' => $sql, 'file'=>$file))); }
 			$res = array();

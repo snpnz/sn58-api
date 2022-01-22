@@ -8,11 +8,12 @@ SELECT
     points_reports.`upload_at`,
     points.name,
     points_groups.name AS group_name,
-    points_groups.description as group_description
+    points_groups.description as group_description,
+    CONCAT_WS(' ', users.surname, users.name) as username,
+    users.photo as userphoto
 FROM
     `points_reports`
     LEFT JOIN points ON points.id = points_reports.id_point
     LEFT JOIN `points_groups` ON points_groups.id = points.id_point_group
-WHERE
-    points_reports.id_user = @id_user
+    LEFT JOIN users ON users.id = points_reports.id_user
 ORDER BY points_reports.`created_at` DESC
