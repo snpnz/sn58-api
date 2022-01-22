@@ -2,7 +2,6 @@
 	require_once('../../_includes/resp.php');
 	require_once('../../_includes/db.php');
 	require_once('../../_includes/sql.php');
-	require_once('../../_includes/keeper.php');
 	require_once('../../_includes/cors.php');
 
 	switch($_SERVER['REQUEST_METHOD'])
@@ -56,6 +55,7 @@
 
 			break;
 			case 'POST':
+				require_once('../../_includes/keeper.php');
 				/**
 				 * @OA\Post(
 				 *     tags={"PointReport"},
