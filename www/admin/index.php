@@ -18,6 +18,7 @@ include_once('../_includes/keeper_admin.php')
       <header class="d-flex justify-content-between align-items-center my-4">
           <h1>Список точек</h1>
           <div>
+          <a type="button" class="btn btn-secondary btn-sm" href="print.php">Печать</a>
             <a type="button" class="btn btn-primary btn-sm" href="edit.php">Добавить</a>
           </div>
       </header>

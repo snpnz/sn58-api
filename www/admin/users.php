@@ -81,10 +81,10 @@ if(!$q) { die($mysqli->error);}
           }
         } else {
           $q = $mysqli->query("
-          SELECT users.*, points.name as point_name, MAX(points_reports.created_at) 
+          SELECT users.*, GROUP_CONCAT(DISTINCT points.name) as point_name, MAX(points_reports.created_at) 
           FROM users 
           LEFT JOIN points_reports ON points_reports.id_user=users.id 
-          LEFT JOIN points ON points_reports.id_point = points.id GROUP BY users.id, points.name");
+          LEFT JOIN points ON points_reports.id_point = points.id GROUP BY users.id");
           if(!$q) {
             die($mysqli->error);
           }
