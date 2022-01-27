@@ -3,6 +3,7 @@
 	require_once('../../_includes/db.php');
 	require_once('../../_includes/sql.php');
 	require_once('../../_includes/cors.php');
+	require_once('../../_includes/keeper.php');
 
 	switch($_SERVER['REQUEST_METHOD'])
 	{
@@ -49,7 +50,7 @@
 				));
 
 			$q = $mysqli->query($sql);
-			if (!$q) { die(err('Error reading user data', array('message' => $mysqli->error, 'sql' => $sql, 'file'=>$file))); }
+			if (!$q) { die(err('Error reading user data', array('message' => $mysqli->error, 'sql' => $sql, 'file'=>$file1, '$uid' => $uid))); }
 			$res = array();
 			while($r = $q->fetch_assoc()) {
 				$res[] = $r;
