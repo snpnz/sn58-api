@@ -43,7 +43,10 @@
 			$file2 = __DIR__.'/sql/getAllPointsReports.sql';
 			$sql = !isset($_GET['all'])
 				? getSql($file1, array('id_user' => $uid))
-				: getSql($file2);
+				: getSql($file2, array(
+					'is_filter_by_point' => isset($_GET['id_point']), 
+					'id_point' => intval($_GET['id_point']), 
+				));
 
 			$q = $mysqli->query($sql);
 			if (!$q) { die(err('Error reading user data', array('message' => $mysqli->error, 'sql' => $sql, 'file'=>$file))); }
