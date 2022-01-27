@@ -81,23 +81,17 @@ header("Location: https://www.strava.com/oauth/authorize?client_id=73436&respons
 	?>
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/referee/">Sn58 referee</a>
+    <a class="navbar-brand" href="/admin/referee/">Sn58 referee</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarText">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/referee/">Точки</a>
+          <a class="nav-link active" aria-current="page" href="/admin/referee/">Точки</a>
         </li>
 		<li class="nav-item">
-          <a class="nav-link" aria-current="page" href="/admin/users.php">Пользователи</a>
-        </li>
-		<li class="nav-item">
-          <a class="nav-link" aria-current="page" href="/admin/checkpoints.php">Отметки</a>
-        </li>
-		<li class="nav-item">
-          <a class="nav-link" aria-current="page" href="/admin/groups.php">Группы точек (маршруты)</a>
+          <a class="nav-link" aria-current="page" href="/admin/referee/print.php">Группы точек (маршруты)</a>
         </li>
       </ul>
       <span class="navbar-text">

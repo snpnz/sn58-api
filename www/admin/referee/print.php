@@ -1,5 +1,5 @@
 <?php
-      include_once('../_includes/keeper_referee.php')
+      include_once('../../_includes/keeper_referee.php')
     ?>
 <!doctype html>
 <html lang="ru">
@@ -24,7 +24,7 @@
       </header>
     <div class="list-group">
       <?php
-        include_once('../_includes/db.php');
+        include_once('../../_includes/db.php');
         $q = $mysqli->query("SELECT points.*, points_groups.name as groupname FROM points 
         LEFT JOIN points_groups ON points_groups.id = points.id_point_group");
         while($r = $q -> fetch_assoc()){
