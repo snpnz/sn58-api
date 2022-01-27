@@ -38,7 +38,7 @@
         $user_id = $r[0];
     }
 
-    if (iseet($_GET['invite'])) {
+    if (isset($_GET['invite'])) {
         $invite = $mysqli -> real_escape_string($_GET['invite']);
         $z = "SELECT id_user FROM user_tokens WHERE token='{$invite}' LIMIT 1";
         $q = $mysqli -> query($z);

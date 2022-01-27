@@ -21,7 +21,8 @@
     	 *					"surname": "Ололоев",
     	 *					"photo": "http://images.com/photo123.jpg",
     	 *					"password": "12345",
-    	 *					"strava_id": "12345"
+    	 *					"strava_id": "12345",
+		 *                  "invite": "aDSc5DEFcFD1B45cAaa",
 		 * 				   }
 		 *             )
 		 *         )
@@ -75,6 +76,7 @@
 			$photo = $mysqli->real_escape_string(trim($params['photo']));
 			$password = $mysqli->real_escape_string(trim($params['password']));
 			$strava_id = $mysqli->real_escape_string(trim($params['strava_id']));
+			$invite = $mysqli->real_escape_string(trim($params['invite']));
 
 			if (empty($login)) {
 				die(err('Login is required', $login));
