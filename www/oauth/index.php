@@ -2,8 +2,7 @@
     if (!isset($_GET['code'])) {
         die('Wrong code');
     }
- //print_r($_GET);
- //Array ( [redir] => http://localhost:3000 [state] => [code] => 4225a8733344ee1bfde968832682bd044d9a3773 [scope] => read,activity:read )
+    
 	require_once('../_includes/db.php');
     require_once('../_includes/ip.php');
 
@@ -28,15 +27,43 @@
     }
 
     $strava_id = $res['athlete']['id'];
+    $user_id = 0;
 
     $z = "SELECT id FROM users WHERE strava_id='{$strava_id}' LIMIT 1";
     $q = $mysqli -> query($z);
     if (!$q) { die($mysqli -> error); }
+    
+    if ($q -> num_rows == 1) {
+        $r = $q -> fetch_row();
+        $user_id = $r[0];
+    }
+
+    if (iseet($_GET['invite'])) {
+        $invite = $mysqli -> real_escape_string($_GET['invite']);
+        $z = "SELECT id_user FROM user_tokens WHERE token='{$invite}' LIMIT 1";
+        $q = $mysqli -> query($z);
+        if (!$q) { die('find token by invite code '.$mysqli -> error); }
+
+        if ($q -> num_rows == 1) {
+            $r = $q -> fetch_row();
+            $user_id = $r[0];
+
+            $z = "UPDATE users SET
+                `login` = '".$res['athlete']['username']."',
+                `name` = '".$res['athlete']['firstname']."',
+                `surname` = '".$res['athlete']['lastname']."',
+                `photo` = '".$res['athlete']['profile']."',
+                `strava_id` = '".$res['athlete']['id']."'
+            WHERE id={$user_id}";
+            $q = $mysqli -> query($z);
+            if (!$q) { die("update profile by strava data ".$mysqli -> error); }
+        }
+    }
 
 
-    $ip = getIp();
+    
 
-    if ($q->num_rows === 0) {
+    if (!($user_id > 0)) {
         $z = "
         INSERT INTO `users`(
             `login`,
@@ -59,16 +86,15 @@
         $q = $mysqli -> query($z);
         if (!$q) { die($mysqli -> error); }
         $user_id = $mysqli -> insert_id;
-    } else {
-        $r = $q -> fetch_assoc();
-        $user_id = $r['id'];
+    } 
+    
 
-        $z = "SELECT id FROM user_tokens WHERE token='".$res['access_token']."' LIMIT 1";
-        $q = $mysqli -> query($z);
-        if (!$q) { die($mysqli -> error); }
+    $z = "SELECT id FROM user_tokens WHERE token='".$res['access_token']."' LIMIT 1";
+    $q = $mysqli -> query($z);
+    if (!$q) { die($mysqli -> error); }
 
         if ($q->num_rows === 0) {
-        
+            $ip = getIp();
             $z = "
             INSERT INTO `user_tokens`(
                 `id_user`,
@@ -90,7 +116,7 @@
             if (!$q) { die($mysqli -> error); }
         }
 
-    }
+
 
 
         $authdata = array(
