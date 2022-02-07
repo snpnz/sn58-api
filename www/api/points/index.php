@@ -12,6 +12,13 @@
 		 *   tags={"Points"},
 		 *   path="/api/points/",
 		 *   summary="Get points data",
+		 *   @OA\Parameter(
+		 *       name="id_point_group",
+		 *       in="query",
+		 *       description="id_point_group to filter by",
+		 *       required=false,
+		 *       style="form"
+		 *   ),
 		 *   @OA\Response(
 		 *     response="200",
 		 *     description="List of points",
@@ -42,7 +49,16 @@
 
 
 		$file = __DIR__.'/sql/getPointsData.sql';
-		$sql = getSql($file, array());
+
+
+		$criterias = array('is_filter_by_id_point_group' => false);
+
+		if (intval($_GET['id_point_group']) > 0) {
+			$criterias['is_filter_by_id_point_group'] = true;
+			$criterias['id_point_group'] = intval($_GET['id_point_group']);
+		}
+
+		$sql = getSql($file, $criterias);
 		$q = $mysqli->query($sql);
 		if (!$q) { die(err('Error reading points data', array('message' => $mysqli->error, 'sql' => $sql, 'file'=>$file))); }
 		$res = array();

@@ -1,0 +1,1 @@
+DELETE FROM `event_members` WHERE `id` = @id

@@ -1,0 +1,9 @@
+SELECT
+    users.id,
+    users.name,
+    users.surname,
+    users.photo
+FROM
+    users
+WHERE
+    1

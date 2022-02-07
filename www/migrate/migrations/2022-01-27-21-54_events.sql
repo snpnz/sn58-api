@@ -27,13 +27,6 @@ ALTER TABLE `points_reports`
     ON DELETE SET NULL
     ON UPDATE CASCADE;
 
-ALTER TABLE `points_reports`
-    ADD CONSTRAINT `fk_points_reports_id_event_point_referee`
-    FOREIGN KEY (`id_event_point_referee`)
-    REFERENCES `event_points_referees` (`id`)
-    ON DELETE SET NULL
-    ON UPDATE CASCADE;
-
 CREATE TABLE `event_points` (
     `id` INT(8) NOT NULL AUTO_INCREMENT,
     `id_event` INT(9) NOT NULL,
@@ -80,11 +73,18 @@ ALTER TABLE `event_points_referees`
     ON DELETE RESTRICT
     ON UPDATE CASCADE;
 
-ALTER TABLE `event_members`
+ALTER TABLE `event_points_referees`
     ADD CONSTRAINT `fk_event_points_referees_id_user`
     FOREIGN KEY (`id_user`)
     REFERENCES `users` (`id`)
     ON DELETE CASCADE
+    ON UPDATE CASCADE;
+
+ALTER TABLE `points_reports`
+    ADD CONSTRAINT `fk_points_reports_id_event_point_referee`
+    FOREIGN KEY (`id_event_point_referee`)
+    REFERENCES `event_points_referees` (`id`)
+    ON DELETE SET NULL
     ON UPDATE CASCADE;
 
 CREATE TABLE `event_members` (
@@ -101,21 +101,21 @@ CREATE TABLE `event_members` (
 ) ENGINE = InnoDB COMMENT = 'Участники мероприятия';
 
 ALTER TABLE `event_members`
-    ADD CONSTRAINT `fk_events_id_event`
+    ADD CONSTRAINT `fk_event_members_id_event`
     FOREIGN KEY (`id_event`)
     REFERENCES `events` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE;
 
 ALTER TABLE `event_members`
-    ADD CONSTRAINT `fk_events_id_author`
+    ADD CONSTRAINT `fk_event_members_id_author`
     FOREIGN KEY (`id_author`)
     REFERENCES `users` (`id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE;
 
 ALTER TABLE `event_members`
-    ADD CONSTRAINT `fk_events_id_user`
+    ADD CONSTRAINT `fk_event_members_id_user`
     FOREIGN KEY (`id_user`)
     REFERENCES `users` (`id`)
     ON DELETE SET NULL

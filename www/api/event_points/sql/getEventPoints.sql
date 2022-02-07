@@ -11,8 +11,9 @@ SELECT
     points_groups.name AS group_name,
     points_groups.description as group_description
 FROM
-    `points` LEFT JOIN `points_groups` ON points_groups.id = points.id_point_group
+    event_points
+    LEFT JOIN `points` ON event_points.id_point = points.id
+    LEFT JOIN `points_groups` ON points_groups.id = points.id_point_group
 WHERE
-    1
-    --@is_filter_by_id_point_group AND points.id_point_group = @id_point_group
-ORDER BY points.id_point_group DESC, points.created_at
+    event_points.id_event = @id_event
+ORDER BY event_points.sort_order

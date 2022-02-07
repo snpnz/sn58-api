@@ -1,0 +1,20 @@
+INSERT INTO `event_members`(
+    `id_event`,
+    `created_at`,
+    `id_author`,
+    `id_user`,
+    `name`,
+    `surname`,
+    `token`,
+    `accepted_at`
+)
+VALUES(
+    @id_event,
+    NOW(),
+    @id_author,
+    @id_user,
+    @name,
+    @surname,
+    @token,
+    @accepted_at
+)

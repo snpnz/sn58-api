@@ -1,0 +1,1 @@
+DELETE FROM `event_points` WHERE `id` = @id
