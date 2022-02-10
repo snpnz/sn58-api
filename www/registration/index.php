@@ -173,7 +173,7 @@ $redir = $dom."/oauth/?redir=".$url;
           if(!$q) {
             $displayError = $mysqli->error;
           } else {
-            $displaySuccess = "Вы успешно подтвердили свое участие. До встречи!"
+            $displaySuccess = "Вы успешно подтвердили свое участие. До встречи!";
           }
       }
     }
