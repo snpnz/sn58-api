@@ -169,7 +169,7 @@ $redir = $dom."/oauth/?redir=".$url;
       }
 
       if (!empty($uid)) {
-          $q = $mysqli->query("UPDATE event_members SET id_user={$uid}, accepted_at=NOW()");
+          $q = $mysqli->query("UPDATE event_members SET id_user={$uid}, accepted_at=NOW() WHERE id=".$re['id']);
           if(!$q) {
             $displayError = $mysqli->error;
           } else {
