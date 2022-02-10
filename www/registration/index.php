@@ -45,35 +45,12 @@
     <h1 class="display-5 fw-bold"><?=$event['name']?></h1>
     <div class="col-lg-6 mx-auto">
       <p class="lead"><?=$event['description']?></p>
-      <p class="lead"><?=date('d.m.Y H:i', strtotime($event['start_at']))?> — <?=date('d.m.Y H:i', strtotime($event['finish_at']))?></p>
+      <p class="lead" title="завершение <?=date('d.m.Y H:i', strtotime($event['finish_at']))?>">начало: <?=date('d.m.Y в H:i', strtotime($event['start_at']))?></p>
+
+
+
+
 <?php
-	if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')   
-	$url = "https://";   
-else  
-	$url = "http://";   
-// Append the host(domain name, ip) to the URL.   
-$url.= $_SERVER['HTTP_HOST'];  
-
-$dom = $url;
-
-// Append the requested resource location to the URL   
-$url.= $_SERVER['REQUEST_URI'];    
-
-$redir = $dom."/oauth/?redir=".$url;
-?>
-      <a href="https://www.strava.com/oauth/authorize?client_id=73436&response_type=code&approval_prompt=auto&redirect_uri=<?=$redir?>" type="button" class="btn btn-outline-primary btn-block w-100 my-4">
-        Записаться в 1 клик через Strava
-        <img src="https://d3nn82uaxijpm6.cloudfront.net/favicon-16x16.png?v=dLlWydWlG8" alt="strava">
-  </a>
-      
-
-      <div class="divider"><span>или</span></div>
-
-
-
-      <form class="mt-4 pt-4" method="POST" action="/registration/?event=<?=$_GET['event']?>">
-
-      <?php
         $displayError = "";
         $displaySuccess = "";
         if (isset($_POST['name']) && isset(($_POST['surname'])) && isset(($_POST['email']))) {
@@ -87,20 +64,23 @@ $redir = $dom."/oauth/?redir=".$url;
 
 
             $q = $mysqli->query("
-            SELECT id FROM event_members
+            SELECT id, name, created_at FROM event_members
             WHERE ".(isset($user) ? 'id_user='.$user['id'] : "login='".$mysqli->real_escape_string(trim($_POST['email']))."'")."
             AND id_event=".intval($_GET['event'])." LIMIT 1 ");
             if(!$q) {
               $displayError = $mysqli->error;
             } else if ($q->num_rows == 1){
-              $displayError = "Вы уже записались на это событие";
+              $rr = $q -> fetch_assoc();
+              $displayError = $rr['name'].", Вы уже записались на это событие ".date('d.m.y в H:i', strtotime($rr['created_at']));
             }
           
 
             if (empty($displayError)) {
 
+              $email = $mysqli->real_escape_string(trim($_POST['email']));
+              $name = $mysqli->real_escape_string(trim($_POST['name']));
 
-              $token = md5("snpnz-invite".time().$mysqli->real_escape_string(trim($_POST['email'])));
+              $token = md5("snpnz-invite".time().$email);
 
               $q = $mysqli->query("
                 INSERT INTO
@@ -110,9 +90,9 @@ $redir = $dom."/oauth/?redir=".$url;
                     `created_at` = NOW(),
                     `id_author` = ".(isset($user) ? $user['id'] : 'NULL').",
                     `id_user` = ".(isset($user) ? $user['id'] : 'NULL').",
-                    `name` = '".$mysqli->real_escape_string(trim($_POST['name']))."',
+                    `name` = '".$name."',
                     `surname` = '".$mysqli->real_escape_string(trim($_POST['surname']))."',
-                    `login` = '".$mysqli->real_escape_string(trim($_POST['email']))."',
+                    `login` = '".$email."',
                     `token` = '".$token."',
                     `accepted_at` = ".(isset($user) ? 'NOW()' : 'NULL')."
               ");
@@ -120,30 +100,63 @@ $redir = $dom."/oauth/?redir=".$url;
                 $displayError = $mysqli->error;
               } else {
                 $displaySuccess = "Вы успешно записались. Спасибо.";
+                $to      = $email;
+                $subject = 'Подтверждение участия в событии "'.$event['name'].'"';
+                $message = '<p>Здравствуйте, '.$name.'<p>';
+                $message .= '<p>Для подтверждения участия в мероприятии <b>'.$event['name'].'</b>';
+                $message .= ' - перейдите по <a href="'.$dom.'/registration?event='.$_GET['event'].'&token='.$token.'">ссылке</a><p>';
+                $headers = 'From: serebnit@gmail.com'       . "\r\n" .
+                             'Reply-To: serebnit@gmail.com' . "\r\n" .
+                             'X-Mailer: PHP/' . phpversion();
+            
+                mail($to, $subject, $message, $headers);
               }
             }
         }
       ?>
 
-      <?php
-        if (isset($_GET['token']) && isset($_GET['id'])) {
+      
+
+
+
+<?php
+        if (isset($_COOKIE['snpnz-auth']) || isset($_GET['token'])) {
+
+          if (isset($_COOKIE['snpnz-auth'])) {
+            $data = json_decode($_COOKIE['snpnz-auth'], true);
+            $token = $data['token'];
+          }
+
+          if (isset($_GET['token'])) {
+            $token = $mysqli -> real_escape_string($_GET['token']);
+          }
+
+
           $q = $mysqli->query("
-            SELECT id, login, name, surname FROM users WHERE id='".intval($_GET['id'])."'");
+            SELECT
+              users.id, users.login, users.name, users.surname
+            FROM
+              users
+              LEFT JOIN user_tokens ON user_tokens.id_user = users.id
+            WHERE user_tokens.token='{$token}'");
           if(!$q) {
             $displayError = $mysqli->error;
+          } else if ($q->num_rows ==0) {
+            $displayError = "Ошибка авторизации ".$token;
           } else {
             $user = $q -> fetch_assoc();
           }
 
 
             $q = $mysqli->query("
-            SELECT id FROM event_members
+            SELECT id, created_at FROM event_members
             WHERE id_user='".$user['id']."'"."
             AND id_event=".intval($_GET['event'])." LIMIT 1 ");
             if(!$q) {
               $displayError = $mysqli->error;
             } else if ($q->num_rows == 1){
-              $displayError = "Вы уже записались на это событие";
+              $rr = $q -> fetch_assoc();
+              $displayError = $user['name'].", Вы уже записались на это событие ".date('d.m.y в H:i', strtotime($rr['created_at']));
             }
 
 
@@ -169,11 +182,12 @@ $redir = $dom."/oauth/?redir=".$url;
               if(!$q) {
                 $displayError = $mysqli->error;
               } else {
-                $displaySuccess = "Вы успешно записались. Спасибо.";
+                $displaySuccess = "Вы успешно записались, ".$user['name'].". Спасибо.";
               }
             }
         }
       ?>
+
 
       <?php
 
@@ -193,7 +207,7 @@ $redir = $dom."/oauth/?redir=".$url;
 <?php
 
 if (!empty($displayError)) {
-  echo '<div class="alert alert-danger d-flex align-items-center" role="alert">
+  echo '<div class="alert alert-warning d-flex align-items-center" role="alert">
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
     <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
   </svg>
@@ -201,9 +215,50 @@ if (!empty($displayError)) {
     '.$displayError.'
   </div>
 </div>';
+die();
 }
 
 ?>
+
+<?php
+	if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')   
+	$url = "https://";   
+else  
+	$url = "http://";   
+// Append the host(domain name, ip) to the URL.   
+$url.= $_SERVER['HTTP_HOST'];  
+
+$dom = $url;
+
+// Append the requested resource location to the URL   
+$url.= $_SERVER['REQUEST_URI'];    
+
+$redir = $dom."/oauth/?redir=".$url;
+?>
+
+
+
+    <div class="row align-items-center">
+          <div class="col-sm-3 text-end d-none d-md-block">Просто</div>
+          <div class="col-sm-9">
+          <a 
+      href="https://www.strava.com/oauth/authorize?client_id=73436&response_type=code&approval_prompt=auto&redirect_uri=<?=$redir?>"
+       type="button" class="btn btn-outline-primary d-block w-100 my-4">
+        Записаться в 1 клик через Strava
+        <img src="https://d3nn82uaxijpm6.cloudfront.net/favicon-16x16.png?v=dLlWydWlG8" alt="strava">
+  </a>
+          </div>
+        </div>
+
+      
+
+      <div class="divider"><span>или</span></div>
+
+
+
+      <form class="mt-4 pt-4" method="POST" action="/registration/?event=<?=$_GET['event']?>">
+
+      
 
       <div class="mb-3 row">
           <label for="surname" class="col-sm-3 col-form-label text-md-end text-start ">Фамилия</label>
