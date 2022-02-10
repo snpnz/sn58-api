@@ -34,6 +34,7 @@
     </style>
   </head>
   <body>
+
   <?php
         include_once('../_includes/db.php');
         $q = $mysqli->query("
@@ -48,7 +49,21 @@
       <p class="lead" title="завершение <?=date('d.m.Y H:i', strtotime($event['finish_at']))?>">начало: <?=date('d.m.Y в H:i', strtotime($event['start_at']))?></p>
 
 
+      <?php
+	if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')   
+	$url = "https://";   
+else  
+	$url = "http://";   
+// Append the host(domain name, ip) to the URL.   
+$url.= $_SERVER['HTTP_HOST'];  
 
+$dom = $url;
+
+// Append the requested resource location to the URL   
+$url.= $_SERVER['REQUEST_URI'];    
+
+$redir = $dom."/oauth/?redir=".$url;
+?>
 
 <?php
         $displayError = "";
@@ -104,12 +119,16 @@
                 $subject = 'Подтверждение участия в событии "'.$event['name'].'"';
                 $message = '<p>Здравствуйте, '.$name.'<p>';
                 $message .= '<p>Для подтверждения участия в мероприятии <b>'.$event['name'].'</b>';
-                $message .= ' - перейдите по <a href="'.$dom.'/registration?event='.$_GET['event'].'&token='.$token.'">ссылке</a><p>';
+                $link = $dom.'/registration?event='.$_GET['event'].'&token='.$token;
+                $message .= ' - перейдите по ссылке <a href="'.$link.'">'.$link.'</a><p>';
                 $headers = 'From: serebnit@gmail.com'       . "\r\n" .
                              'Reply-To: serebnit@gmail.com' . "\r\n" .
                              'X-Mailer: PHP/' . phpversion();
+                $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
             
                 mail($to, $subject, $message, $headers);
+
+                $displaySuccess = "Для подтверждения нужно перейти по ссылке из письма отправленного на адрес {$email} <small>(если не нашли письмо, проверьте Спам)</small>";
               }
             }
         }
@@ -220,21 +239,7 @@ die();
 
 ?>
 
-<?php
-	if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')   
-	$url = "https://";   
-else  
-	$url = "http://";   
-// Append the host(domain name, ip) to the URL.   
-$url.= $_SERVER['HTTP_HOST'];  
 
-$dom = $url;
-
-// Append the requested resource location to the URL   
-$url.= $_SERVER['REQUEST_URI'];    
-
-$redir = $dom."/oauth/?redir=".$url;
-?>
 
 
 
