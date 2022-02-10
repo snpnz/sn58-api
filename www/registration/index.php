@@ -134,22 +134,60 @@ $redir = $dom."/oauth/?redir=".$url;
         }
       ?>
 
-      
 
+<?php
+  if (isset($_GET['token'])) {
+    $token = $mysqli -> real_escape_string($_GET['token']);
+    $q = $mysqli->query("SELECT 
+      `id`, `id_event`, `created_at`, `id_author`, `id_user`, `name`, `surname`, `login`, `token`, `accepted_at`
+      FROM event_members WHERE token='{$token}' LIMIT 1");
+    if(!$q) {
+      $displayError = $mysqli->error;
+    } else if ($q->num_rows == 1) {
+      $re = $q-> fetch_assoc();
+      $q = $mysqli->query("SELECT id FROM users WHERE login='".$re['login']."' LIMIT 1");
+      if ($q && $q-> num_rows == 1) {
+        $res = $q->fetch_row();
+        $uid = $res[0];
+      } else {
+        $z = "
+        INSERT INTO
+            `users`
+        SET
+            `login` = '".$re['login']."',
+            `name` = '".$re['name']."',
+            `surname` = '".$re['surname']."',
+            `photo` = '',
+            `register_date` = NOW()
+        ";
+        $q = $mysqli->query($z);
+        if(!$q) {
+          $displayError = $mysqli->error;
+        } else {
+          $uid = $mysqli -> insert_id;
+        }
+      }
+
+      if (!empty($uid)) {
+          $q = $mysqli->query("UPDATE event_members SET id_user={$uid}, accepted_at=NOW()");
+          if(!$q) {
+            $displayError = $mysqli->error;
+          } else {
+            $displaySuccess = "Вы успешно подтвердили свое участие. До встречи!"
+          }
+      }
+    }
+  }  
+?>
 
 
 <?php
-        if (isset($_COOKIE['snpnz-auth']) || isset($_GET['token'])) {
+        if (isset($_COOKIE['snpnz-auth'])) {
 
           if (isset($_COOKIE['snpnz-auth'])) {
             $data = json_decode($_COOKIE['snpnz-auth'], true);
             $token = $data['token'];
           }
-
-          if (isset($_GET['token'])) {
-            $token = $mysqli -> real_escape_string($_GET['token']);
-          }
-
 
           $q = $mysqli->query("
             SELECT
