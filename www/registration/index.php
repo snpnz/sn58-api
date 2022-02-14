@@ -271,7 +271,7 @@ $redir = $dom."/oauth/?redir=".$url;
           </div>
         </div>');
 
-        include_once('team_form.php');
+        include('team_form.php');
 
         die();
         }
@@ -289,7 +289,7 @@ if (!empty($displayError)) {
     '.$displayError.'
   </div>
 </div>';
-include_once('team_form.php');
+include('team_form.php');
 die();
 }
 
