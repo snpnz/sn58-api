@@ -168,6 +168,12 @@ $redir = $dom."/oauth/?redir=".$url;
       }
 
       if (!empty($uid)) {
+          $q = $mysqli->query("SELECT id, name, accepted_at FROM event_members WHERE id_user={$uid} AND token='{$token}' AND accepted_at IS NOT NULL LIMIT 1");
+          if ($q && $q -> num_rows == 1) {
+            $r = $q->fetch_assoc();
+            $already = $token;
+            $displayError = $r['name'].', Вы уже подтвердили свое участие '.date('d.m.y в H:i', strtotime($r['created_at']));
+          } else {}
           $q = $mysqli->query("UPDATE event_members SET id_user={$uid}, accepted_at=NOW()");
           if(!$q) {
             $displayError = $mysqli->error;
