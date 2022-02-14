@@ -1,6 +1,6 @@
 <?php
-    if (!empty($already)) {
-        $q = $mysqli->query("SELECT id_event, team FROM event_members WHERE token = '{$already}' LIMIT 1");
+    if (!empty($GLOBALS['already'])) {
+        $q = $mysqli->query("SELECT id_event, team FROM event_members WHERE token = '{$GLOBALS['already']}' LIMIT 1");
         $r = $q -> fetch_assoc();
         $q = $mysqli->query("SELECT DISTINCT team FROM event_members WHERE id_event = ".$r['id_event']);
 
@@ -16,7 +16,7 @@ echo '<form method="post">
             list="teams" id="team" name="team"
             value="'.(isset($_POST['team'])? $_POST['team']:$r['team']).'"
         >
-        <input type="hidden" name="teamupdatetoken" value="'.$already.'">
+        <input type="hidden" name="teamupdatetoken" value="'.$GLOBALS['already'].'">
         <div class="form-text text-start">Вы можете указать название команды за которую выступаете или оставить поле пустым</div>
         </div>
     </div>

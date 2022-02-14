@@ -41,7 +41,7 @@
         SELECT events.* FROM events WHERE id=".intval($_GET['event']));
         if(!$q) { die($mysqli->error);}
        $event = $q -> fetch_assoc();
-       $already = "";
+       $GLOBALS['already'] = "";
   ?>
   <div class="px-4 py-5 my-5 text-center">
     <h1 class="display-5 fw-bold"><?=$event['name']?></h1>
@@ -87,7 +87,7 @@ $redir = $dom."/oauth/?redir=".$url;
               $displayError = $mysqli->error;
             } else if ($q->num_rows == 1){
               $rr = $q -> fetch_assoc();
-              $already = $rr['token'];
+              $GLOBALS['already'] = $rr['token'];
               $displayError = $rr['name'].", Вы уже записались на это событие ".date('d.m.y в H:i', strtotime($rr['created_at']));
             }
           
@@ -173,7 +173,7 @@ $redir = $dom."/oauth/?redir=".$url;
             $displayError = $mysqli->error;
           } else if ($q && $q -> num_rows == 1) {
             $r = $q->fetch_assoc();
-            $already = $token;
+            $GLOBALS['already'] = $token;
             $displayError = $r['name'].', Вы уже подтвердили свое участие '.date('d.m.y в H:i', strtotime($r['created_at']));
           } else {
             $q = $mysqli->query("UPDATE event_members SET id_user={$uid}, accepted_at=NOW()");
@@ -182,7 +182,7 @@ $redir = $dom."/oauth/?redir=".$url;
             } else {
               
               $displaySuccess = "Вы успешно подтвердили свое участие.";
-              $already = $token;
+              $GLOBALS['already'] = $token;
             }
           }
          
@@ -224,7 +224,7 @@ $redir = $dom."/oauth/?redir=".$url;
               $displayError = $mysqli->error;
             } else if ($q->num_rows == 1){
               $rr = $q -> fetch_assoc();
-              $already = $rr['token'];
+              $GLOBALS['already'] = $rr['token'];
               $displayError = $user['name'].", Вы уже записались на это событие ".date('d.m.y в H:i', strtotime($rr['created_at']));
             }
 
@@ -252,7 +252,7 @@ $redir = $dom."/oauth/?redir=".$url;
                 $displayError = $mysqli->error;
               } else {
                 $displaySuccess = "Вы успешно записались, ".$user['name'].". Спасибо.";
-                $already = $token;
+                $GLOBALS['already'] = $token;
               }
             }
         }
