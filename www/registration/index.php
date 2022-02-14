@@ -1,11 +1,44 @@
+<?php
+      $id_event = intval($_GET['event']);
+      if (!($id_event)) {
+        die('Это какое-то неведомое событие...');
+      }
+      include_once('../_includes/db.php');
+      $q = $mysqli->query("SELECT events.* FROM events WHERE id=".$id_event);
+      if(!$q) { die($mysqli->error);}
+      $event = $q -> fetch_assoc();
+
+      $url = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https://" : "http://";   
+      $url.= $_SERVER['HTTP_HOST'];  
+      $dom = $url;
+      $url.= $_SERVER['REQUEST_URI'];
+      $redir = $dom."/oauth/?redir=".$url;
+
+      $link = $dom.'/registration?event='.$id_event;
+
+    ?>
 <!doctype html>
 <html lang="ru">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+   
+   
+   
+    <meta property="og:title" content="<?=$event['name']?>">
+    <meta property="og:type" content="article" />
+    <meta property="og:image" content="https://sn58.tk/android-chrome-192x192.png">
+    <meta property="og:url" content="<?=$link?>">
+    <meta name="twitter:card" content="https://sn58.tk/android-chrome-192x192.png">
 
-    <title>sn58.tk registration</title>
+    <!--  Non-Essential, But Recommended -->
+    <meta property="og:description" content="<?=$event['description']?>">
+    <meta property="og:site_name" content="<?=$event['name']?>">
+    <meta name="twitter:image:alt" content="<?=$event['name']?>">
+
+    <!--  Non-Essential, But Required for Analytics -->
+    <title><?=$event['name']?></title>
     <style>
 
     .divider {
@@ -34,16 +67,7 @@
     </style>
   </head>
   <body>
-    <?php
-      $id_event = intval($_GET['event']);
-      if (!($id_event)) {
-        die('Это какое-то неведомое событие...');
-      }
-      include_once('../_includes/db.php');
-      $q = $mysqli->query("SELECT events.* FROM events WHERE id=".$id_event);
-      if(!$q) { die($mysqli->error);}
-      $event = $q -> fetch_assoc();
-    ?>
+
   <div class="px-4 py-5 my-5 text-center">
     <h1 class="display-5 fw-bold"><?=$event['name']?></h1>
     <div class="col-lg-6 mx-auto">
@@ -51,11 +75,7 @@
       <p class="lead" title="завершение <?=date('d.m.Y H:i', strtotime($event['finish_at']))?>">начало: <?=date('d.m.Y в H:i', strtotime($event['start_at']))?></p>
 
       <?php
-        $url = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https://" : "http://";   
-        $url.= $_SERVER['HTTP_HOST'];  
-        $dom = $url;
-        $url.= $_SERVER['REQUEST_URI'];
-        $redir = $dom."/oauth/?redir=".$url;
+
 
         $displayError = "";
         $displaySuccess = "";
