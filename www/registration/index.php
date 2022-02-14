@@ -171,7 +171,7 @@
           } else if ($q && $q -> num_rows == 1) {
             $r = $q->fetch_assoc();
             $already = $token;
-            $displayWarns = $r['name'].', Вы уже подтвердили свое участие '.date('d.m.y в H:i', strtotime($r['accepted_at']));
+            $displaySuccess = $r['name'].', Вы уже подтвердили свое участие '.date('d.m.y в H:i', strtotime($r['accepted_at']));
           } else {
             $q = $mysqli->query("UPDATE event_members SET id_user={$uid}, accepted_at=NOW() WHERE token='{$token}'");
             if(!$q) {
