@@ -35,6 +35,8 @@ echo '<form method="post">
             }
         }
         echo '</datalist>';
+    } else {
+        echo 'no already';
     }
 
     if (isset($_POST['team']) && isset($_POST['teamupdatetoken'])) {
