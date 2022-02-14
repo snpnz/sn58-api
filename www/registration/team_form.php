@@ -11,7 +11,7 @@ echo '<form method="post">
         <input
             type="text"
             autofocus
-            autocomplete="team"
+            autocomplete="organization"
             class="form-control"
             list="teams" id="team" name="team"
             value="'.(isset($_POST['team'])? $_POST['team']:$r['team']).'"
