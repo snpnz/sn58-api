@@ -6,7 +6,7 @@
                 type="text"
                 autofocus
                 required
-                autocomplete="surname"
+                autocomplete="family-name"
                 class="form-control"
                 id="surname"
                 name="surname"
@@ -22,7 +22,7 @@
             <input
               type="text"
               required
-              autocomplete="name"
+              autocomplete="given-name"
               class="form-control"
               id="name"
               name="name"
