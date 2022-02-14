@@ -241,6 +241,7 @@ $redir = $dom."/oauth/?redir=".$url;
                 $displayError = $mysqli->error;
               } else {
                 $displaySuccess = "Вы успешно записались, ".$user['name'].". Спасибо.";
+                $already = $token;
               }
             }
         }
