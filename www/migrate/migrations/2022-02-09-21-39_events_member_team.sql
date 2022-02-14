@@ -1,0 +1,1 @@
+ALTER TABLE `event_members` ADD `team` VARCHAR(128) NULL DEFAULT NULL AFTER `login`;
