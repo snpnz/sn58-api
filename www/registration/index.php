@@ -121,10 +121,7 @@ $redir = $dom."/oauth/?redir=".$url;
                 $message .= '<p>Для подтверждения участия в мероприятии <b>'.$event['name'].'</b>';
                 $link = $dom.'/registration?event='.$_GET['event'].'&token='.$token;
                 $message .= ' - перейдите по ссылке <a href="'.$link.'">'.$link.'</a><p>';
-                $headers = 'From: info@sn58.tk'. "\r\n" .
-                             'Reply-To: info@sn58.tk' . "\r\n" .
-                             'X-Mailer: PHP/' . phpversion(). "\r\n" .
-                             "Content-Type: text/html; charset=UTF-8\r\n";
+                $headers = "Content-Type: text/html; charset=UTF-8\r\n";
             
                 mail($to, $subject, $message, $headers);
 
@@ -169,11 +166,11 @@ $redir = $dom."/oauth/?redir=".$url;
       }
 
       if (!empty($uid)) {
-          $q = $mysqli->query("UPDATE event_members SET id_user={$uid}, accepted_at=NOW() WHERE id=".$re['id']);
+          $q = $mysqli->query("UPDATE event_members SET id_user={$uid}, accepted_at=NOW()");
           if(!$q) {
             $displayError = $mysqli->error;
           } else {
-            $displaySuccess = "Вы успешно подтвердили свое участие. До встречи!";
+            $displaySuccess = "Вы успешно подтвердили свое участие."
           }
       }
     }
