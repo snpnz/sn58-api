@@ -49,7 +49,7 @@
             $user_id = $r[0];
 
             $z = "UPDATE users SET
-                `login` = '".$res['athlete']['username']."',
+                `login` = '".(isset($res['athlete']['email']) ? $res['athlete']['email'] : $res['athlete']['username'])."',
                 `name` = '".$res['athlete']['firstname']."',
                 `surname` = '".$res['athlete']['lastname']."',
                 `photo` = '".$res['athlete']['profile']."',
@@ -75,7 +75,7 @@
             `register_date`
         )
         VALUES(
-            '".$res['athlete']['username']."',
+            '".(isset($res['athlete']['email'])?$res['athlete']['email']:$res['athlete']['username'])."',
             '".$res['athlete']['firstname']."',
             '".$res['athlete']['lastname']."',
             '".$res['athlete']['profile']."',
