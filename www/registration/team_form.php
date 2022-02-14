@@ -44,7 +44,7 @@ echo '<form method="post">
         $q = $mysqli -> query("UPDATE event_members SET team='{$team}' WHERE token='{$tok}'");
         if ($q) {
             echo '<div class="offset-sm-3 alert alert-success" role="alert">
-            Вы успешно выбрали команду "'.$team.'"
+            '.(empty() ? 'Вы указали что участвуете без команды': 'Вы успешно выбрали команду "'.$team.'"').'
           </div>';
         }
     }
