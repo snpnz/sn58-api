@@ -34,94 +34,87 @@
     </style>
   </head>
   <body>
-
-  <?php
-        include_once('../_includes/db.php');
-        $q = $mysqli->query("
-        SELECT events.* FROM events WHERE id=".intval($_GET['event']));
-        if(!$q) { die($mysqli->error);}
-       $event = $q -> fetch_assoc();
-       $GLOBALS['already'] = "";
-  ?>
+    <?php
+      $id_event = intval($_GET['event']);
+      if (!($id_event)) {
+        die('Это какое-то неведомое событие...');
+      }
+      include_once('../_includes/db.php');
+      $q = $mysqli->query("SELECT events.* FROM events WHERE id=".$id_event);
+      if(!$q) { die($mysqli->error);}
+      $event = $q -> fetch_assoc();
+    ?>
   <div class="px-4 py-5 my-5 text-center">
     <h1 class="display-5 fw-bold"><?=$event['name']?></h1>
     <div class="col-lg-6 mx-auto">
       <p class="lead"><?=$event['description']?></p>
       <p class="lead" title="завершение <?=date('d.m.Y H:i', strtotime($event['finish_at']))?>">начало: <?=date('d.m.Y в H:i', strtotime($event['start_at']))?></p>
 
-
       <?php
-	if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')   
-	$url = "https://";   
-else  
-	$url = "http://";   
-// Append the host(domain name, ip) to the URL.   
-$url.= $_SERVER['HTTP_HOST'];  
+        $url = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https://" : "http://";   
+        $url.= $_SERVER['HTTP_HOST'];  
+        $dom = $url;
+        $url.= $_SERVER['REQUEST_URI'];
+        $redir = $dom."/oauth/?redir=".$url;
 
-$dom = $url;
-
-// Append the requested resource location to the URL   
-$url.= $_SERVER['REQUEST_URI'];    
-
-$redir = $dom."/oauth/?redir=".$url;
-?>
-
-<?php
         $displayError = "";
         $displaySuccess = "";
+        $already = "";
+
+        // Register form send data
+
         if (isset($_POST['name']) && isset(($_POST['surname'])) && isset(($_POST['email']))) {
-          $q = $mysqli->query("
-            SELECT id FROM users WHERE login='".intval($_POST['email'])."'");
+
+          $email = $mysqli->real_escape_string(trim($_POST['email']));
+          $name = $mysqli->real_escape_string(trim($_POST['name']));
+          $surname = $mysqli->real_escape_string(trim($_POST['surname']));
+
+          $q = $mysqli->query("SELECT id FROM users WHERE login='{$email}' LIMIT 1");
           if(!$q) {
             $displayError = $mysqli->error;
-          } else {
+          } else if ($q -> num_rows == 1){
             $user = $q -> fetch_assoc();
           }
 
 
             $q = $mysqli->query("
             SELECT id, name, token, created_at FROM event_members
-            WHERE ".(isset($user) ? 'id_user='.$user['id'] : "login='".$mysqli->real_escape_string(trim($_POST['email']))."'")."
-            AND id_event=".intval($_GET['event'])." LIMIT 1 ");
+            WHERE ".(isset($user) ? 'id_user='.$user['id'] : "login='{$email}'")."
+            AND id_event={$id_event} LIMIT 1 ");
             if(!$q) {
               $displayError = $mysqli->error;
             } else if ($q->num_rows == 1){
               $rr = $q -> fetch_assoc();
-              $GLOBALS['already'] = $rr['token'];
+              $already = $rr['token'];
               $displayError = $rr['name'].", Вы уже записались на это событие ".date('d.m.y в H:i', strtotime($rr['created_at']));
             }
           
 
             if (empty($displayError)) {
-
-              $email = $mysqli->real_escape_string(trim($_POST['email']));
-              $name = $mysqli->real_escape_string(trim($_POST['name']));
-
               $token = md5("snpnz-invite".time().$email);
-
               $q = $mysqli->query("
                 INSERT INTO
                     `event_members`
                 SET
-                    `id_event` = ".intval($_GET['event']).",
+                    `id_event` = {$id_event},
                     `created_at` = NOW(),
                     `id_author` = ".(isset($user) ? $user['id'] : 'NULL').",
                     `id_user` = ".(isset($user) ? $user['id'] : 'NULL').",
-                    `name` = '".$name."',
-                    `surname` = '".$mysqli->real_escape_string(trim($_POST['surname']))."',
-                    `login` = '".$email."',
-                    `token` = '".$token."',
+                    `name` = '{$name}',
+                    `surname` = '{$surname}',
+                    `login` = '{$email}',
+                    `token` = '{$token}',
                     `accepted_at` = ".(isset($user) ? 'NOW()' : 'NULL')."
               ");
               if(!$q) {
                 $displayError = $mysqli->error;
               } else {
-                $displaySuccess = "Вы успешно записались. Спасибо.";
+
                 $to      = $email;
                 $subject = 'Подтверждение участия в событии "'.$event['name'].'"';
                 $message = '<p>Здравствуйте, '.$name.'<p>';
                 $message .= '<p>Для подтверждения участия в мероприятии <b>'.$event['name'].'</b>';
-                $link = $dom.'/registration?event='.$_GET['event'].'&token='.$token;
+                $link = $dom.'/registration?event='.$id_event.'&token='.$token;
                 $message .= ' - перейдите по ссылке <a href="'.$link.'">'.$link.'</a><p>';
                 $headers = "Content-Type: text/html; charset=UTF-8\r\n";
             
@@ -131,7 +124,9 @@ $redir = $dom."/oauth/?redir=".$url;
               }
             }
         }
+        // end Register form send data
       ?>
+
 
 
 <?php
@@ -168,21 +163,22 @@ $redir = $dom."/oauth/?redir=".$url;
       }
 
       if (!empty($uid)) {
-          $q = $mysqli->query("SELECT id, name, accepted_at FROM event_members WHERE id_user={$uid} AND token='{$token}' AND accepted_at IS NOT NULL LIMIT 1");
+          $q = $mysqli->query("SELECT id, name, accepted_at FROM event_members
+          WHERE id_user={$uid} AND token='{$token}' AND accepted_at IS NOT NULL LIMIT 1");
           if(!$q) {
             $displayError = $mysqli->error;
           } else if ($q && $q -> num_rows == 1) {
             $r = $q->fetch_assoc();
-            $GLOBALS['already'] = $token;
-            $displayError = $r['name'].', Вы уже подтвердили свое участие '.date('d.m.y в H:i', strtotime($r['created_at']));
+            $already = $token;
+            $displayError = $r['name'].', Вы уже подтвердили свое участие '.date('d.m.y в H:i', strtotime($r['accepted_at']));
           } else {
-            $q = $mysqli->query("UPDATE event_members SET id_user={$uid}, accepted_at=NOW()");
+            $q = $mysqli->query("UPDATE event_members SET id_user={$uid}, accepted_at=NOW() WHERE token='{$token}'");
             if(!$q) {
               $displayError = $mysqli->error;
             } else {
-              
+               
               $displaySuccess = "Вы успешно подтвердили свое участие.";
-              $GLOBALS['already'] = $token;
+              $already = $token;
             }
           }
          
@@ -194,11 +190,8 @@ $redir = $dom."/oauth/?redir=".$url;
 
 <?php
         if (isset($_COOKIE['snpnz-auth'])) {
-
-          if (isset($_COOKIE['snpnz-auth'])) {
-            $data = json_decode($_COOKIE['snpnz-auth'], true);
-            $token = $data['token'];
-          }
+          $data = json_decode($_COOKIE['snpnz-auth'], true);
+          $token = $data['token'];
 
           $q = $mysqli->query("
             SELECT
@@ -219,12 +212,12 @@ $redir = $dom."/oauth/?redir=".$url;
             $q = $mysqli->query("
             SELECT id, created_at, token FROM event_members
             WHERE id_user='".$user['id']."'"."
-            AND id_event=".intval($_GET['event'])." LIMIT 1 ");
+            AND id_event={$id_event} LIMIT 1 ");
             if(!$q) {
               $displayError = $mysqli->error;
             } else if ($q->num_rows == 1){
               $rr = $q -> fetch_assoc();
-              $GLOBALS['already'] = $rr['token'];
+              $already = $rr['token'];
               $displayError = $user['name'].", Вы уже записались на это событие ".date('d.m.y в H:i', strtotime($rr['created_at']));
             }
 
@@ -238,7 +231,7 @@ $redir = $dom."/oauth/?redir=".$url;
                 INSERT INTO
                     `event_members`
                 SET
-                    `id_event` = ".intval($_GET['event']).",
+                    `id_event` = {$id_event},
                     `created_at` = NOW(),
                     `id_author` = ".$user['id'].",
                     `id_user` = ".$user['id'].",
@@ -252,7 +245,7 @@ $redir = $dom."/oauth/?redir=".$url;
                 $displayError = $mysqli->error;
               } else {
                 $displaySuccess = "Вы успешно записались, ".$user['name'].". Спасибо.";
-                $GLOBALS['already'] = $token;
+                $already = $token;
               }
             }
         }
@@ -270,6 +263,8 @@ $redir = $dom."/oauth/?redir=".$url;
             '.$displaySuccess.'
           </div>
         </div>');
+
+        echo '<pre>'.$already.'</pre>';
 
         include('team_form.php');
 
@@ -300,16 +295,18 @@ die();
 
 
     <div class="row align-items-center">
-          <div class="col-sm-3 text-end d-none d-md-block">Просто</div>
-          <div class="col-sm-9">
+      <div class="col-sm-3 text-end d-none d-md-block">Просто</div>
+        <div class="col-sm-9">
           <a 
-      href="https://www.strava.com/oauth/authorize?client_id=73436&response_type=code&approval_prompt=auto&redirect_uri=<?=$redir?>"
-       type="button" class="btn btn-outline-primary d-block w-100 my-4">
-        Записаться в 1 клик через Strava
-        <img src="https://d3nn82uaxijpm6.cloudfront.net/favicon-16x16.png?v=dLlWydWlG8" alt="strava">
-  </a>
-          </div>
+            href="https://www.strava.com/oauth/authorize?client_id=73436&response_type=code&approval_prompt=auto&redirect_uri=<?=$redir?>"
+            type="button"
+            class="btn btn-outline-primary d-block w-100 my-4"
+          >
+            Записаться в 1 клик через Strava
+            <img src="https://d3nn82uaxijpm6.cloudfront.net/favicon-16x16.png?v=dLlWydWlG8" alt="strava">
+          </a>
         </div>
+      </div>
 
       
 
@@ -317,65 +314,9 @@ die();
 
 
 
-      <form class="mt-4 pt-4" method="POST" action="/registration/?event=<?=$_GET['event']?>">
-
-      
-
-      <div class="mb-3 row">
-          <label for="surname" class="col-sm-3 col-form-label text-md-end text-start ">Фамилия</label>
-          <div class="col-sm-9">
-            <input
-              type="text"
-              autofocus
-              required
-              autocomplete="surname"
-              class="form-control"
-              id="surname"
-              name="surname"
-              pattern="[А-Я][а-я]+"
-              value="<?=$_POST['surname']?>"
-            >
-          </div>
-        </div>
-
-      <div class="mb-3 row">
-        <label for="name" class="col-sm-3 col-form-label text-md-end text-start">Имя</label>
-          <div class="col-sm-9">
-            <input
-              type="text"
-              required
-              autocomplete="name"
-              class="form-control"
-              id="name"
-              name="name"
-              pattern="[А-Я][а-я]+\s?-?\s?([А-Я][а-я]+)?"
-              value="<?=$_POST['name']?>"
-            >
-          </div>
-        </div>
-
-        <div class="mb-3 row">
-          <label for="email" class="col-sm-3 col-form-label text-md-end text-start">E-mail</label>
-          <div class="col-sm-9">
-            <input
-              type="email"
-              required
-              autocomplete="email"
-              class="form-control"
-              id="email"
-              name="email"
-              value="<?=$_POST['email']?>"
-            >
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-3  col-form-label "></div>
-          <div class="col-sm-9 text-start">
-          <button type="submit" class="btn btn-outline-primary">Записаться</button>
-          </div>
-          
-        </div>
-      </form>
+      <?php
+        include_once('reg_form.php');
+      ?>
       
 
     </div>
