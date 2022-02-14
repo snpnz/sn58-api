@@ -172,8 +172,9 @@ $redir = $dom."/oauth/?redir=".$url;
           if(!$q) {
             $displayError = $mysqli->error;
           } else {
-            $already = $token;
+            
             $displaySuccess = "Вы успешно подтвердили свое участие.";
+            $already = $token;
           }
       }
     }
