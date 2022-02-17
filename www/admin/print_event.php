@@ -26,28 +26,40 @@
         max-width: 88mm;
         outline: 1px dashed red;
         margin: 1mm;
-      
-        display: flex;
-      }
-      .ololo footer {
         padding: 5mm;
-        margin-left: -5mm;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .ololo .main {
+        display: flex;
+        flex-grow: 2;
+      }
+      .ololo article {
         min-width: 0;
       }
 
-      .ololo pre {
+      .ololo article pre {
         padding-top: 3mm;
         line-height: 1.1em;
+        font-size: 0.8em;
       }
 
-      .ololo footer small {
+      .ololo img {
+        width: 40mm;
+        height: 40mm;
+
+        margin-top: -5mm;
+      }
+
+      .ololo article small {
           display: block;
           color: green;
           line-height: 1.1em;
          
         }
 
-        .ololo footer small em {
+        .ololo article small em {
           text-overflow: ellipsis;
           overflow: hidden;
           white-space: nowrap;
@@ -57,24 +69,35 @@
           margin-top: 0.02em;
         }
 
-        .ololo footer b {
+        .ololo article b {
           display: block;
           line-height: 1.1em;
         }
         .ololo aside {
           text-align: center;
+          margin-left: -5mm;
         }
         .ololo aside span {
           display: block;
           margin-top: -5mm;
           font-size: 0.8em;
+          font-weight: bold;
+        }
+
+        .ololo footer {
+          border-top: 1px dotted #adadad;
+          font-size: 0.8em;
+          margin-bottom: -3mm;
+          text-align: right;
+          margin-top: auto;
         }
     </style>
   </head>
   <body>
-    <div class="container row">
-        <div class="col-sm-6">
+    <div class="container">
           <form>
+            <div class="row">
+            <div class="col-sm-6">
             <input type="hidden" name="id" value="<?=$_GET['id']?>">
             <label for="info" class="form-label">
               Информация для каждой карточки
@@ -85,11 +108,26 @@
                 id="info"
                 name="info"
               ><?=$_GET['info']?></textarea>
+            </div>
+            <div class="col-sm-6">
+            <input type="hidden" name="id" value="<?=$_GET['id']?>">
+            <label for="footer" class="form-label">
+              Нижняя строка
+            </label>
+              <input
+                class="form-control"
+                id="footer"
+                name="footer"
+                value="<?=$_GET['footer']?>"
+              >
+            </div>
+            
+
+            </div>
               <button type="submit" class="btn btn-primary mt-3">Сохранить</button>
+
           </form>
-        </div>
-        <div class="col-sm-6">
-        </div>
+        
     </div>
     
 
@@ -109,20 +147,22 @@
         while($r = $q -> fetch_assoc()){
           echo '
           <div class="ololo">
-            <aside>
-            <img
-              src="https://chart.apis.google.com/chart?cht=qr&chs=350x350&chl=https://sn58.tk/?invite='.$r['token'].'"
-              alt="'.$r['token'].'"
-              height="80%"
-            >
-            <span>участник №'.$i.'</span>
-            </aside>
-            <footer>
-              <small>'.$r['eventname'].'</small>
-              '.(!empty($r['team']) ? '<small><em>'.$r['team'].'</em></small>' : '').'
-              <b>'.($r['username'].' '.$r['surname']).' '.(empty($r['accepted_at']) ? '~' : '').'</b>
-              <pre>'.$_GET['info'].'</pre>
-            </footer>
+            <div class="main">
+              <aside>
+                <img
+                  src="https://chart.apis.google.com/chart?cht=qr&chs=350x350&chl=https://sn58.tk/?invite='.$r['token'].'"
+                  alt="'.$r['token'].'"
+                >
+                <span>участник №&thinsp;'.$i.'</span>
+              </aside>
+              <article>
+                <small>'.$r['eventname'].'</small>
+                '.(!empty($r['team']) ? '<small><em>'.$r['team'].'</em></small>' : '').'
+                <b>'.($r['username'].' '.$r['surname']).' '.(empty($r['accepted_at']) ? '~' : '').'</b>
+                <pre>'.$_GET['info'].'</pre>
+              </article>
+            </div>
+            '.(isset($_GET['footer'])? '<footer>'.$_GET['footer'].'</footer>': '').'
           </div>';
 
           $i++;
