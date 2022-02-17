@@ -32,6 +32,7 @@
       .ololo footer {
         padding: 5mm;
         margin-left: -5mm;
+        min-width: 0;
       }
 
       .ololo pre {
@@ -43,8 +44,19 @@
           display: block;
           color: green;
           line-height: 1.1em;
-          margin-bottom: 0.2em;
+         
         }
+
+        .ololo footer small em {
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          color: red;
+          display: block;
+          font-size: 0.8em;
+          margin-top: 0.02em;
+        }
+
         .ololo footer b {
           display: block;
           line-height: 1.1em;
@@ -88,7 +100,7 @@
         echo "<section class='pp'>";
         include_once('../_includes/db.php');
         $q = $mysqli->query("SELECT
-          events.name as eventname, event_members.token, event_members.name as username, event_members.surname, event_members.accepted_at FROM event_members
+          events.name as eventname, event_members.token, event_members.team, event_members.name as username, event_members.surname, event_members.accepted_at FROM event_members
         LEFT JOIN events ON event_members.id_event = events.id WHERE events.id = ".$_GET['id']);
         if (!$q) {
           die($mysqli->error);
@@ -107,6 +119,7 @@
             </aside>
             <footer>
               <small>'.$r['eventname'].'</small>
+              '.(!empty($r['team']) ? '<small><em>'.$r['team'].'</em></small>' : '').'
               <b>'.($r['username'].' '.$r['surname']).' '.(empty($r['accepted_at']) ? '~' : '').'</b>
               <pre>'.$_GET['info'].'</pre>
             </footer>
