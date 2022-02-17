@@ -94,13 +94,13 @@
           if(!$q) {
             $displayError = $mysqli->error;
           } else if ($q -> num_rows == 1){
-            $user = $q -> fetch_assoc();
+            $curUser = $q -> fetch_assoc();
           }
 
 
             $q = $mysqli->query("
             SELECT id, name, token, created_at FROM event_members
-            WHERE ".(isset($user) ? 'id_user='.$user['id'] : "login='{$email}'")."
+            WHERE ".(isset($curUser) ? 'id_user='.$curUser['id'] : "login='{$email}'")."
             AND id_event={$id_event} LIMIT 1 ");
             if(!$q) {
               $displayError = $mysqli->error;
@@ -119,13 +119,13 @@
                 SET
                     `id_event` = {$id_event},
                     `created_at` = NOW(),
-                    `id_author` = ".(isset($user) ? $user['id'] : 'NULL').",
-                    `id_user` = ".(isset($user) ? $user['id'] : 'NULL').",
+                    `id_author` = ".(isset($curUser) ? $curUser['id'] : 'NULL').",
+                    `id_user` = ".(isset($curUser) ? $curUser['id'] : 'NULL').",
                     `name` = '{$name}',
                     `surname` = '{$surname}',
                     `login` = '{$email}',
                     `token` = '{$token}',
-                    `accepted_at` = ".(isset($user) ? 'NOW()' : 'NULL')."
+                    `accepted_at` = ".(isset($curUser) ? 'NOW()' : 'NULL')."
               ");
               if(!$q) {
                 $displayError = $mysqli->error;
@@ -226,27 +226,27 @@
           } else if ($q->num_rows ==0) {
             $displayError = "Ошибка авторизации ".$token;
           } else {
-            $user = $q -> fetch_assoc();
+            $curUser = $q -> fetch_assoc();
           }
 
 
             $q = $mysqli->query("
             SELECT id, created_at, token FROM event_members
-            WHERE id_user='".$user['id']."'"."
+            WHERE id_user='".$curUser['id']."'"."
             AND id_event={$id_event} LIMIT 1 ");
             if(!$q) {
               $displayError = $mysqli->error;
             } else if ($q->num_rows == 1){
               $rr = $q -> fetch_assoc();
               $already = $rr['token'];
-              $displayWarns = $user['name'].", Вы уже записались на это событие ".date('d.m.y в H:i', strtotime($rr['created_at']));
+              $displayWarns = $curUser['name'].", Вы уже записались на это событие ".date('d.m.y в H:i', strtotime($rr['created_at']));
             }
 
 
             if (empty($displayError) && empty($displayWarns)) {
 
 
-              $token = md5("snpnz-invite".time().$user['id']);
+              $token = md5("snpnz-invite".time().$curUser['id']);
 
               $q = $mysqli->query("
                 INSERT INTO
@@ -254,18 +254,18 @@
                 SET
                     `id_event` = {$id_event},
                     `created_at` = NOW(),
-                    `id_author` = ".$user['id'].",
-                    `id_user` = ".$user['id'].",
-                    `name` = '".$user['name']."',
-                    `surname` = '".$user['surname']."',
-                    `login` = '".$user['email']."',
+                    `id_author` = ".$curUser['id'].",
+                    `id_user` = ".$curUser['id'].",
+                    `name` = '".$curUser['name']."',
+                    `surname` = '".$curUser['surname']."',
+                    `login` = '".$curUser['email']."',
                     `token` = '".$token."',
                     `accepted_at` = NOW()
               ");
               if(!$q) {
                 $displayError = $mysqli->error;
               } else {
-                $displaySuccess = "Вы успешно записались, ".$user['name'].". Спасибо.";
+                $displaySuccess = "Вы успешно записались, ".$curUser['name'].". Спасибо.";
                 $already = $token;
               }
             }

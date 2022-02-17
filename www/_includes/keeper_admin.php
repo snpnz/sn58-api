@@ -74,7 +74,7 @@ header("Location: https://www.strava.com/oauth/authorize?client_id=73436&respons
 
 	if(!$res['superman']) {
 		die('<div class="alert alert-dark m-5" role="alert">
-		You are not superman...
+		{'.$uid.'} You are not superman...
 	  </div>');
 	}
 
