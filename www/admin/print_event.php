@@ -139,12 +139,17 @@
         include_once('../_includes/db.php');
         $q = $mysqli->query("SELECT
           events.name as eventname, event_members.token, event_members.team, event_members.name as username, event_members.surname, event_members.accepted_at FROM event_members
-        LEFT JOIN events ON event_members.id_event = events.id WHERE events.id = ".$_GET['id']);
+        LEFT JOIN events ON event_members.id_event = events.id WHERE events.id = ".$_GET['id']." ORDER BY `event_members`.`created_at` ");
         if (!$q) {
           die($mysqli->error);
         }
         $i = 1;
         while($r = $q -> fetch_assoc()){
+
+          $nam = $r['username'].' '.$r['surname'];
+          if (empty($r['username']) && empty($r['surname'])) {
+            $nam = 'Участник события';
+          }
           echo '
           <div class="ololo">
             <div class="main">
@@ -158,7 +163,7 @@
               <article>
                 <small>'.$r['eventname'].'</small>
                 '.(!empty($r['team']) ? '<small><em>'.$r['team'].'</em></small>' : '').'
-                <b>'.($r['username'].' '.$r['surname']).' '.(empty($r['accepted_at']) ? '~' : '').'</b>
+                <b>'.($nam).' '.(empty($r['accepted_at']) ? '~' : '').'</b>
                 <pre>'.$_GET['info'].'</pre>
               </article>
             </div>
@@ -170,32 +175,7 @@
         die('</section>');
       }
     ?>
-    <form>
-    <section class="container">
-      <header class="d-flex justify-content-between align-items-center my-4">
-          <h1>Список точек</h1>
-          <div>
-            <button type="submit" class="btn btn-primary btn-sm">Печать</a>
-          </div>
-      </header>
-    <div class="list-group">
-      <?php
-        include_once('../_includes/db.php');
-        $q = $mysqli->query("SELECT points.*, points_groups.name as groupname FROM points 
-        LEFT JOIN points_groups ON points_groups.id = points.id_point_group");
-        while($r = $q -> fetch_assoc()){
-          echo '
-          <li class="list-group-item list-group-item-action "><div class="form-check">
-            <input class="form-check-input" name="id[]" type="checkbox" value="'.$r['id'].'" id="point'.$r['id'].'">
-            <label class="form-check-label" for="point'.$r['id'].'">
-            '.$r['name'].' <small class="text-primary">'.($r['groupname']).'</small>
-            </label>
-          </div></li>';
-        }
-      ?>
-      </div>
-</section>
-</form>
+
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
