@@ -7,6 +7,7 @@ SELECT
     event_members.`name`,
     event_members.`surname`,
     event_members.`token`,
+    event_members.`team`,
     event_members.`accepted_at`,
     users.name as username,
     users.surname as usersurname,
