@@ -1,5 +1,20 @@
 <?php
-      $id_event = intval($_GET['event']);
+
+      if (isset($_GET['invite'])) {
+        include_once('../_includes/db.php');
+        $invite = $mysqli->real_escape_string($_GET['invite']);
+        $q = $mysqli->query("SELECT id_event FROM event_members WHERE token='{$invite}' LIMIT 1");
+        if (!$q) { die($mysqli->error); }
+        if ($q -> num_rows == 1) {
+          $r = $q->fetch_row();
+          $id_event = $r[0];
+        } else {
+          die('wrong invite '.$invite);
+        }
+      } else {
+        $id_event = intval($_GET['event']);
+      }
+
       if (!($id_event)) {
         die('Это какое-то неведомое событие...');
       }
@@ -337,7 +352,7 @@ die();
             type="button"
             class="btn btn-outline-primary d-block w-100 my-4"
           >
-            Записаться в 1 клик через Strava
+            <?php echo isset($_GET['invite']) ? 'Зарегистрироваться': 'Записаться'; ?> в 1 клик через Strava
             <img src="https://d3nn82uaxijpm6.cloudfront.net/favicon-16x16.png?v=dLlWydWlG8" alt="strava">
           </a>
         </div>

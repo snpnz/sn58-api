@@ -12,23 +12,22 @@
     <style>
       .pp {
         padding:15mm;
-        display: flex;
-        align-items: flex-start;
-        flex-wrap: wrap;
-
+        font-family:  'Arial narrow', arial;
       }
       .ololo {
-        height: 48mm;
-        min-height: 48mm;
-        max-height: 48mm;
-        width: 88mm;
-        min-width: 88mm;
-        max-width: 88mm;
-        outline: 1px dashed red;
-        margin: 1mm;
-        padding: 5mm;
-        display: flex;
+        height: 44mm;
+        min-height: 44mm;
+        max-height: 44mm;
+        width: 80mm;
+        min-width: 80mm;
+        max-width: 80mm;
+        outline: 1px dashed #a0a0a0;
+        margin: 1px;
+        margin-bottom: 2px;
+        padding: 2mm;
+        display: inline-flex;
         flex-direction: column;
+        float: left;
       }
 
       .ololo .main {
@@ -40,23 +39,24 @@
       }
 
       .ololo article pre {
-        padding-top: 3mm;
+        padding-top: 2mm;
         line-height: 1.1em;
         font-size: 0.8em;
+        overflow: visible;
       }
 
       .ololo img {
-        width: 40mm;
-        height: 40mm;
+        width: 35mm;
+        height: 35mm;
 
-        margin-top: -5mm;
+        margin-top: -2mm;
       }
 
-      .ololo article small {
+      .ololo article small:first-child {
           display: block;
           color: green;
-          line-height: 1.1em;
-         
+          line-height: 0.9em;
+          margin-top: 2mm;
         }
 
         .ololo article small em {
@@ -66,7 +66,6 @@
           color: red;
           display: block;
           font-size: 0.8em;
-          margin-top: 0.02em;
         }
 
         .ololo article b {
@@ -75,11 +74,11 @@
         }
         .ololo aside {
           text-align: center;
-          margin-left: -5mm;
+          margin-left: -2mm;
         }
         .ololo aside span {
           display: block;
-          margin-top: -5mm;
+          margin-top: -4mm;
           font-size: 0.8em;
           font-weight: bold;
         }
@@ -87,7 +86,7 @@
         .ololo footer {
           border-top: 1px dotted #adadad;
           font-size: 0.8em;
-          margin-bottom: -3mm;
+          margin-bottom: -1mm;
           text-align: right;
           margin-top: auto;
         }
@@ -155,7 +154,7 @@
             <div class="main">
               <aside>
                 <img
-                  src="https://chart.apis.google.com/chart?cht=qr&chs=350x350&chl=https://sn58.tk/?invite='.$r['token'].'"
+                  src="https://chart.apis.google.com/chart?cht=qr&chs=350x350&chl=https://sn58.tk/registration/?invite='.$r['token'].'"
                   alt="'.$r['token'].'"
                 >
                 <span>участник №&thinsp;'.$i.'</span>

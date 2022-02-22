@@ -49,7 +49,9 @@
         <div class="row">
           <div class="col-sm-3  col-form-label "></div>
           <div class="col-sm-9 text-start">
-          <button type="submit" class="btn btn-outline-primary">Записаться</button>
+          <button type="submit" class="btn btn-outline-primary">
+          <?php echo isset($_GET['invite']) ? 'Зарегистрироваться': 'Записаться'; ?>
+          </button>
           </div>
         </div>
       </form>
