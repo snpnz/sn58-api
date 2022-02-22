@@ -118,20 +118,75 @@
 				$coordinates = $mysqli -> real_escape_string($params['coordinates']);
 				$comment = $mysqli -> real_escape_string($params['comment']);
 				$created_at = $mysqli -> real_escape_string($params['created_at']);
+				$invite = $mysqli -> real_escape_string($params['invite']);
+				$name = $mysqli -> real_escape_string($params['name']);
+				$team = $mysqli -> real_escape_string($params['team']);
 
-				$file = __DIR__.'/sql/addPointReport.sql';
-				$sql = getSql(
-					$file,
-					array(
-						'id_user' => $uid,
-						'id_point' => $id_point,
-						'coordinates' => $coordinates,
-						'comment' => $comment,
-						'created_at' => $created_at
-					)
-				);
+				if (empty($invite)) {
+					$file = __DIR__.'/sql/addPointReport.sql';
+					$sql = getSql(
+						$file,
+						array(
+							'id_user' => $uid,
+							'id_point' => $id_point,
+							'coordinates' => $coordinates,
+							'comment' => $comment,
+							'created_at' => $created_at
+						)
+					);
+				} else {
+					$id_user = 'NULL';
+					$id_event = 'NULL';
+					$id_event_member = 'NULL';
+					$nameParts = explode(' ', $name);
+					$q = $mysqli -> query("SELECT id, id_user, id_event, name, surname FROM event_members WHERE token='{$invite}' LIMIT 1");
+					if ($q && $q->num_rows == 1) {
+						$old = $q -> fetch_assoc();
+
+						if (!empty($old['id_user'])) {
+							$id_user = $old['id_user'];
+						}
+						if (!empty($old['id_event'])) {
+							$id_event = $old['id_event'];
+						}
+						
+						if (!empty($old['id'])) {
+							$id_event_member = $old['id'];
+						}
+						$patch = array();
+
+						$patch['surname'] = !empty($nameParts[0]) ? trim($nameParts[0]) : $old['surname'];
+						$patch['name'] = !empty($nameParts[1]) ? trim($nameParts[1]) : $old['name'];
+						$patch['team'] = !empty($team) ? trim($team) : $old['team'];
+						$z = "UPDATE event_members SET ";
+						foreach($patch as $k => $v) {
+							$z .= "`{$k}` = '{$v}',";
+						}
+
+						$z .= " id=".$old['id']." WHERE id=".$old['id'];
+						$q = $mysqli->query($z);
+						if (!$q) { die(err('Error add point report', array('message' => $mysqli->error, 'z' => $z))); }
+					}
+
+					$file = __DIR__.'/sql/addPointReportWithInvite.sql';
+					
+					$sql = getSql(
+						$file,
+						array(
+							'id_user' => $id_user,
+							'id_author' => $uid,
+							'id_point' => $id_point,
+							'id_event' => $id_event,
+							'id_event_member' => $id_event_member,
+							'coordinates' => $coordinates,
+							'comment' => $comment,
+							'created_at' => $created_at
+						)
+					);
+				}
+				
 				$q = $mysqli->query($sql);
-				if (!$q) { die(err('Error add call request', array('message' => $mysqli->error, 'sql' => $sql, 'file'=>$file))); }
+				if (!$q) { die(err('Error add point report', array('message' => $mysqli->error, 'sql' => $sql, 'file'=>$file))); }
 	
 				exit(jout(array('success' => true, 'id' => $mysqli->insert_id)));
 		
