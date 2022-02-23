@@ -179,7 +179,7 @@
 							'id_event' => $id_event,
 							'id_event_member' => $id_event_member,
 							'coordinates' => $coordinates,
-							'comment' => $comment,
+							'comment' => $name.'|'.$comment,
 							'created_at' => $created_at
 						)
 					);
