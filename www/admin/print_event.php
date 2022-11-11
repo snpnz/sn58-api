@@ -8,7 +8,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
-    <title>sn58.tk admin</title>
+    <title>sn.fednik.ru admin</title>
     <style>
       .pp {
         padding:15mm;
@@ -154,7 +154,7 @@
             <div class="main">
               <aside>
                 <img
-                  src="https://chart.apis.google.com/chart?cht=qr&chs=350x350&chl=https://sn58.tk/registration/?invite='.$r['token'].'"
+                  src="https://chart.apis.google.com/chart?cht=qr&chs=350x350&chl=https://sn.fednik.ru/registration/?invite='.$r['token'].'"
                   alt="'.$r['token'].'"
                 >
                 <span>участник №&thinsp;'.$i.'</span>

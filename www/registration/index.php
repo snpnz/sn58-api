@@ -43,9 +43,9 @@
    
     <meta property="og:title" content="<?=$event['name']?>">
     <meta property="og:type" content="article" />
-    <meta property="og:image" content="https://sn58.tk/android-chrome-192x192.png">
+    <meta property="og:image" content="https://sn.fednik.ru/android-chrome-192x192.png">
     <meta property="og:url" content="<?=$link?>">
-    <meta name="twitter:card" content="https://sn58.tk/android-chrome-192x192.png">
+    <meta name="twitter:card" content="https://sn.fednik.ru/android-chrome-192x192.png">
 
     <!--  Non-Essential, But Recommended -->
     <meta property="og:description" content="<?=$event['description']?>">

@@ -1,10 +1,10 @@
-name: Deploy backend sn58.tk
+name: Deploy backend sn.fednik.ru
 on:
   push:
     branches: [ main ]
 jobs:
   deploy:
-    name: Deploy to sn58.tk
+    name: Deploy to sn.fednik.ru
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2.1.0
@@ -37,4 +37,4 @@ jobs:
         REMOTE_FOLDER: deploy/
         
     - name: Unzip remote
-      run: curl -i -X GET https://sn58.tk/unzip.php?name=${{ env.ARTIFACT_NAME }}
+      run: curl -i -X GET https://sn.fednik.ru/unzip.php?name=${{ env.ARTIFACT_NAME }}

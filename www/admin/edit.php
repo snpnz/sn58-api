@@ -115,9 +115,9 @@ include_once('../_includes/keeper_admin.php')
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body text-center">
-                        <img id="img" src="https://chart.apis.google.com/chart?cht=qr&chs=350x350&chl=https://sn58.tk/?code=<?=(isset($_GET['id'])?$r['code']:'')?>">
+                        <img id="img" src="https://chart.apis.google.com/chart?cht=qr&chs=350x350&chl=https://sn.fednik.ru/?code=<?=(isset($_GET['id'])?$r['code']:'')?>">
                         <div class="mt-3">
-                            <input type="text" readonly class="form-control" id="copyqr" value="https://sn58.tk/?code=<?=(isset($_GET['id'])?$r['code']:'')?>">
+                            <input type="text" readonly class="form-control" id="copyqr" value="https://sn.fednik.ru/?code=<?=(isset($_GET['id'])?$r['code']:'')?>">
                             <div id="nameinfo" class="form-text">Ссылка для генирации кода в других программах</div>
                         </div>
                     </div>
@@ -184,8 +184,8 @@ include_once('../_includes/keeper_admin.php')
                 retVal += charset.charAt(Math.floor(Math.random() * n));
             }
             code.value = retVal;
-            img.src= 'https://chart.apis.google.com/chart?cht=qr&chs=350x350&chl=https://sn58.tk/?code=' + retVal;
-            copyqr.value= 'https://sn58.tk/?code=' + retVal;
+            img.src= 'https://chart.apis.google.com/chart?cht=qr&chs=350x350&chl=https://sn.fednik.ru/?code=' + retVal;
+            copyqr.value= 'https://sn.fednik.ru/?code=' + retVal;
         }
 
         codebtn.onclick = generatePassword;
