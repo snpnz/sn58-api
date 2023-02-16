@@ -23,8 +23,8 @@
       if(!$q) { die($mysqli->error);}
       $event = $q -> fetch_assoc();
 
-      $url = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https://" : "http://";   
-      $url.= $_SERVER['HTTP_HOST'];  
+      $url = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https://" : "http://";
+      $url.= $_SERVER['HTTP_HOST'];
       $dom = $url;
       $url.= $_SERVER['REQUEST_URI'];
       $redir = $dom."/oauth/?redir=".$url;
@@ -38,9 +38,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-   
-   
-   
+
+
+
     <meta property="og:title" content="<?=$event['name']?>">
     <meta property="og:type" content="article" />
     <meta property="og:image" content="https://sn.fednik.ru/android-chrome-192x192.png">
@@ -59,7 +59,7 @@
     .divider {
       position: relative;
       min-height:30px;
-    } 
+    }
 
     .divider:before {
       left:0;
@@ -124,7 +124,7 @@
               $already = $rr['token'];
               $displayWarns = $rr['name'].", Вы уже записались на это событие ".date('d.m.y в H:i', strtotime($rr['created_at']));
             }
-          
+
 
             if (empty($displayError) && empty($displayWarns)) {
               $token = md5("snpnz-invite".time().$email);
@@ -153,7 +153,7 @@
                 $link = $dom.'/registration?event='.$id_event.'&token='.$token;
                 $message .= ' - перейдите по ссылке <a href="'.$link.'">'.$link.'</a><p>';
                 $headers = "Content-Type: text/html; charset=UTF-8\r\n";
-            
+
                 mail($to, $subject, $message, $headers);
 
                 $displaySuccess = "Для подтверждения нужно перейти по ссылке из письма отправленного на адрес {$email} <small>(если не нашли письмо, проверьте Спам)</small>";
@@ -168,7 +168,7 @@
 <?php
   if (isset($_GET['token'])) {
     $token = $mysqli -> real_escape_string($_GET['token']);
-    $q = $mysqli->query("SELECT 
+    $q = $mysqli->query("SELECT
       `id`, `id_event`, `created_at`, `id_author`, `id_user`, `name`, `surname`, `login`, `token`, `accepted_at`
       FROM event_members WHERE token='{$token}' LIMIT 1");
     if(!$q) {
@@ -212,15 +212,15 @@
             if(!$q) {
               $displayError = $mysqli->error;
             } else {
-               
+
               $displaySuccess = "Вы успешно подтвердили свое участие.";
               $already = $token;
             }
           }
-         
+
       }
     }
-  }  
+  }
 ?>
 
 
@@ -304,7 +304,7 @@
 
         die();
         }
-      
+
       ?>
 
 <?php
@@ -347,19 +347,19 @@ die();
     <div class="row align-items-center">
       <div class="col-sm-3 text-end d-none d-md-block">Просто</div>
         <div class="col-sm-9">
-          <a 
-            href="https://www.strava.com/oauth/authorize?client_id=73436&response_type=code&approval_prompt=auto&redirect_uri=<?=$redir?>"
+          <a
+            href="https://pohodnik.tk/login?client_id=1&redirect_uri=<?=$redir?>"
             type="button"
             class="btn btn-outline-primary d-block w-100 my-4"
           >
-            <?php echo isset($_GET['invite']) ? 'Зарегистрироваться': 'Записаться'; ?> в 1 клик через Strava
-            <img src="https://d3nn82uaxijpm6.cloudfront.net/favicon-16x16.png?v=dLlWydWlG8" alt="strava">
+            <?php echo isset($_GET['invite']) ? 'Зарегистрироваться': 'Записаться'; ?> в 1 клик как походник
+            <img src="https://pohodnik.tk/favicon.ico" alt="poh">
           </a>
         </div>
       </div>
 
-      
 
+<!--
       <div class="divider"><span>или</span></div>
 
 
@@ -367,7 +367,7 @@ die();
       <?php
         include_once('reg_form.php');
       ?>
-      
+-->
 
     </div>
   </div>

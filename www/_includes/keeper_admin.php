@@ -1,20 +1,20 @@
 <?php
 
 function goauth(){
-	if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')   
-	$url = "https://";   
-else  
-	$url = "http://";   
-// Append the host(domain name, ip) to the URL.   
-$url.= $_SERVER['HTTP_HOST'];  
+	if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
+	$url = "https://";
+else
+	$url = "http://";
+// Append the host(domain name, ip) to the URL.
+$url.= $_SERVER['HTTP_HOST'];
 
 $dom = $url;
 
-// Append the requested resource location to the URL   
-$url.= $_SERVER['REQUEST_URI'];    
+// Append the requested resource location to the URL
+$url.= $_SERVER['REQUEST_URI'];
 
 $redir = $dom."/oauth/?redir=".$url;
-header("Location: https://www.strava.com/oauth/authorize?client_id=73436&response_type=code&approval_prompt=auto&redirect_uri=".$redir);
+header("Location: https://pohodnik.tk/login?client_id=1&redirect_uri=".$redir);
 
 }
 
@@ -29,21 +29,21 @@ header("Location: https://www.strava.com/oauth/authorize?client_id=73436&respons
 
 	}
 
-	
+
 	if (!isset($cookie) || empty($cookie)) {
 		goauth();
 		die('wrong cookie');
 	}
-	
+
 	$cookieData = json_decode($cookie, true);
-	
+
 	if (!isset($cookieData) || !isset($cookieData['token'])) {
 		goauth();
 		die('wrong cookieData');
 	}
 
 	include_once('db.php');
-	
+
 	$sql = "SELECT
 		id_user, token
 		FROM user_tokens
@@ -59,9 +59,9 @@ header("Location: https://www.strava.com/oauth/authorize?client_id=73436&respons
 		exit();
 		return die('bad token or user');
 	}
-	
+
 	$r = $q -> fetch_row();
-	
+
 	$uid = $r[0];
 
 
@@ -106,4 +106,3 @@ header("Location: https://www.strava.com/oauth/authorize?client_id=73436&respons
     </div>
   </div>
 </nav>
-	
