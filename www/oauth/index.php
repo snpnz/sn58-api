@@ -25,7 +25,7 @@
 
 
     if(!isset($res['id'])) {
-        die('wrong read data');
+        die('wrong read data'.$res);
     }
     $pohodnik_id = $res['id'];
 
