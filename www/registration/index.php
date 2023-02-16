@@ -352,8 +352,7 @@ die();
             type="button"
             class="btn btn-outline-primary d-block w-100 my-4"
           >
-            <?php echo isset($_GET['invite']) ? 'Зарегистрироваться': 'Записаться'; ?> в 1 клик как походник
-            <img src="https://pohodnik.tk/favicon.ico" alt="poh">
+            <?php echo isset($_GET['invite']) ? 'Зарегистрироваться': 'Записаться'; ?> <img src="https://pohodnik.tk/favicon.ico" alt="poh">
           </a>
         </div>
       </div>
