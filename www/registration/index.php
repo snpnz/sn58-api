@@ -345,8 +345,8 @@ die();
 
 
     <div class="row align-items-center">
-      <div class="col-sm-3 text-end d-none d-md-block">Просто</div>
-        <div class="col-sm-9">
+      <div class="col-sm-3 text-end d-none d-md-block"></div>
+        <div class="col-sm-6">
           <a
             href="https://pohodnik.tk/login?client_id=1&redirect_uri=<?=$redir?>"
             type="button"
