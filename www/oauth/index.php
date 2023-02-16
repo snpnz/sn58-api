@@ -130,4 +130,8 @@
         setcookie("snpnz-auth", json_encode($authdata), $res['expires_at'], '/', 'localhost:3000');
         setcookie("snpnz-auth", json_encode($authdata), $res['expires_at'], '/', 'localhost');
 
-        header('Location: '.$_GET['redir']."?token=".$_GET['token']."&expiration=".(time() + (86400 * 30))."&id=".$user_id);
+        if (isset($_GET['redir'])) {
+            header('Location: '.$_GET['redir']."?token=".$_GET['token']."&expiration=".(time() + (86400 * 30))."&id=".$user_id);
+        } else {
+        die(json_encode($authdata));
+        }
