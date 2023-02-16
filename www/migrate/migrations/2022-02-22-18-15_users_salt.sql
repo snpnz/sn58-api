@@ -1,0 +1,1 @@
+ALTER TABLE `users` ADD `salt` VARCHAR(32) NULL DEFAULT NULL AFTER `password`;

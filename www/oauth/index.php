@@ -1,38 +1,38 @@
 <?php
-    if (!isset($_GET['code'])) {
-        die('Wrong code');
+    if (!isset($_GET['token'])) {
+        die('Wrong token');
     }
-    
+
 	require_once('../_includes/db.php');
     require_once('../_includes/ip.php');
 
-    $client_id = '73436';
-    $client_secret = 'ba9fb913d81fc6941fe0d6e96011de332fff2697';
+    $client_id = '1';
+    $client_secret = 'vidW8m4Wulegb6EPy5qihpj1DlW7kpi';
 
-    $post_data="client_id={$client_id}&client_secret={$client_secret}&grant_type=authorization_code&code=".$_GET['code'];
-    $url="https://www.strava.com/api/v3/oauth/token";
-    
+    $post_data="client={$client_id}&secret={$client_secret}&token=".$_GET['token'];
+    $url="https://pohodnik.tk/ajax/externalApp/";
+
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));   
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
     curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $result = curl_exec($ch);
-    
+
     $res = json_decode($result, true);
-    
-    if(!isset($res['access_token'])) {
+
+
+
+    if(!isset($res['id'])) {
         die('wrong read data');
     }
+    $pohodnik_id = $res['id'];
 
-    $strava_id = $res['athlete']['id'];
-    $user_id = 0;
-
-    $z = "SELECT id FROM users WHERE strava_id='{$strava_id}' LIMIT 1";
+    $z = "SELECT id FROM users WHERE strava_id='{$pohodnik_id}' LIMIT 1";
     $q = $mysqli -> query($z);
     if (!$q) { die($mysqli -> error); }
-    
+
     if ($q -> num_rows == 1) {
         $r = $q -> fetch_row();
         $user_id = $r[0];
@@ -49,11 +49,11 @@
             $user_id = $r[0];
 
             $z = "UPDATE users SET
-                `login` = '".(isset($res['athlete']['email']) ? $res['athlete']['email'] : $res['athlete']['username'])."',
-                `name` = '".$res['athlete']['firstname']."',
-                `surname` = '".$res['athlete']['lastname']."',
-                `photo` = '".$res['athlete']['profile']."',
-                `strava_id` = '".$res['athlete']['id']."'
+                `login` = '".(isset($res['email']) ? $res['email'] : 'pohodnik_'.$res['id'])."',
+                `name` = '".$res['name']."',
+                `surname` = '".$res['surname']."',
+                `photo` = '".$res['photo_50']."',
+                `strava_id` = '{$pohodnik_id}'
             WHERE id={$user_id}";
             $q = $mysqli -> query($z);
             if (!$q) { die("update profile by strava data ".$mysqli -> error); }
@@ -61,7 +61,7 @@
     }
 
 
-    
+
 
     if (!($user_id > 0)) {
         $z = "
@@ -75,21 +75,21 @@
             `register_date`
         )
         VALUES(
-            '".(isset($res['athlete']['email'])?$res['athlete']['email']:$res['athlete']['username'])."',
-            '".$res['athlete']['firstname']."',
-            '".$res['athlete']['lastname']."',
-            '".$res['athlete']['profile']."',
+            '".(isset($res['email'])?$res['email']:'pohodnik_'.$pohodnik_id)."',
+            '".$res['name']."',
+            '".$res['surname']."',
+            '".$res['photo_50']."',
             '',
-            '".$res['athlete']['id']."',
+            '".$res['id']."',
             NOW()
         )";
         $q = $mysqli -> query($z);
         if (!$q) { die($mysqli -> error); }
         $user_id = $mysqli -> insert_id;
-    } 
-    
+    }
 
-    $z = "SELECT id FROM user_tokens WHERE token='".$res['access_token']."' LIMIT 1";
+
+    $z = "SELECT id FROM user_tokens WHERE token='".$_GET['token']."' LIMIT 1";
     $q = $mysqli -> query($z);
     if (!$q) { die($mysqli -> error); }
 
@@ -106,10 +106,10 @@
             )
             VALUES(
                 '".$user_id."',
-                '".$res['access_token']."',
-                '".$res['refresh_token']."',
+                '".$_GET['token']."',
+                '".$_GET['token']."',
                 NOW(),
-                '".date('Y-m-d H:i:s', $res['expires_at'])."',
+                '".date('Y-m-d H:i:s', time() + (86400 * 30)."',
                 ".ip2long($ip)."
             )";
             $q = $mysqli -> query($z);
@@ -121,8 +121,8 @@
 
         $authdata = array(
             'id' => $user_id,
-            'token' => $res['access_token'],
-            'expiration' => $res['expires_at']
+            'token' => $_GET['token'],
+            'expiration' => time() + (86400 * 30)
         );
 
         setcookie("snpnz-auth", json_encode($authdata), $res['expires_at'], "/", $_SERVER['HTTP_HOST']);
