@@ -109,7 +109,7 @@
                 '".$_GET['token']."',
                 '".$_GET['token']."',
                 NOW(),
-                '".date('Y-m-d H:i:s', time() + (86400 * 30)."',
+                '".date('Y-m-d H:i:s', time() + (86400 * 30))."',
                 ".ip2long($ip)."
             )";
             $q = $mysqli -> query($z);
