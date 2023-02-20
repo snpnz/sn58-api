@@ -95,6 +95,7 @@
         $displayError = "";
         $displaySuccess = "";
         $displayWarns = "";
+        $displayChecks = "";
         $already = "";
 
         // Register form send data
@@ -254,7 +255,9 @@
             } else if ($q->num_rows == 1){
               $rr = $q -> fetch_assoc();
               $already = $rr['token'];
-              $displayWarns = $curUser['name'].", Вы успешно записались на это событие ".date('d.m.y в H:i', strtotime($rr['created_at']));
+              $title = implode(' → ', array($curUser['name'],date('d.m.Y в H:i', strtotime($rr['created_at'])).""));
+              $displayWarns = "<span title=".($title).">Вы подтвердили свое участие ".date('d.m.Y', strtotime($rr['created_at']))."</span>";
+              $displayChecks = $curUser['name'].", Вы успешно записались на это событие ".date('d.m.y в H:i', strtotime($rr['created_at']));
             }
 
 
@@ -291,7 +294,7 @@
       <?php
 
         if (!empty($displaySuccess)) {
-          echo('<div class="offset-sm-3 alert alert-success d-flex align-items-center" role="alert">
+          echo('<div class="offset-sm-2 alert alert-success d-flex align-items-center" role="alert">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
             <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
           </svg>
@@ -310,13 +313,10 @@
 <?php
 
 if (!empty($displayWarns)) {
-  echo '<div class="offset-sm-3 alert alert-success d-flex align-items-center" role="alert">
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
-    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-  </svg>
-  <div>
-    '.$displayWarns.'
-  </div>
+  echo '<div class="offset-sm-2 p-1 list-item text-success d-flex align-items-center" role="alert">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-patch-check-fill" viewBox="0 0 16 16">
+  <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z"/>
+</svg>&nbsp;&nbsp;'.$displayWarns.'
 </div>';
 include('team_form.php');
 die();
@@ -327,7 +327,7 @@ die();
 <?php
 
 if (!empty($displayError)) {
-  echo '<div class="offset-sm-3 alert alert-warning d-flex align-items-center" role="alert">
+  echo '<div class="offset-sm-2 alert alert-warning d-flex align-items-center" role="alert">
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
     <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
   </svg>
@@ -345,7 +345,7 @@ die();
 
 
     <div class="row align-items-center">
-      <div class="col-sm-3 text-end d-none d-md-block"></div>
+      <div class="col-sm-2 text-end d-none d-md-block"></div>
         <div class="col-sm-6">
           <a
             href="https://pohodnik.tk/login?client_id=1&redirect_uri=<?=$redir?>"
