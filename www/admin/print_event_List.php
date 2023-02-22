@@ -44,7 +44,7 @@
             LEFT JOIN events ON event_members.id_event = events.id
             LEFT JOIN users on users.id=event_members.id_user
         WHERE events.id = ".$_GET['id']."
-         ORDER BY `event_members`.`created_at`");
+         ORDER BY `event_members`.`created_at`, event_members.surname");
         if (!$q) {
           die($mysqli->error);
         }
