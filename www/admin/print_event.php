@@ -183,7 +183,7 @@ position: relative;}
               <article>
                 <small>'.$r['eventname'].'</small>
                 '.(!empty($r['team']) ? '<small><em>'.$r['team'].'</em></small>' : '').'
-                <b>'.($nam).' '.(empty($r['accepted_at']) ? '~' : '').'</b>
+                <b>'.($nam).'</b>
                 <pre>'.$_GET['info'].'</pre>
               </article>
             </div>
