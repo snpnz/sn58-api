@@ -45,11 +45,24 @@
         overflow: visible;
       }
 
-      .ololo img {
+.ololo aside {
+position: relative;}
+      .ololo img.qr {
         width: 35mm;
         height: 35mm;
 
         margin-top: -2mm;
+      }
+
+      .userpic {
+        position: absolute;
+        top: 14mm;
+        left: 15mm;
+        z-index: 3;
+        border: 2px solid #fff;
+        width: 5mm;
+        height: 5mm;
+        border-radius: 50%;
       }
 
       .ololo article small:first-child {
@@ -120,25 +133,25 @@
                 value="<?=$_GET['footer']?>"
               >
             </div>
-            
+
 
             </div>
               <button type="submit" class="btn btn-primary mt-3">Сохранить</button>
 
           </form>
-        
-    </div>
-    
 
-        
-    
+    </div>
+
+
+
+
     <?php
       if (isset($_GET['id'])) {
         echo "<section class='pp'>";
         include_once('../_includes/db.php');
         $q = $mysqli->query("SELECT
-          events.name as eventname, event_members.token, event_members.team, event_members.name as username, event_members.surname, event_members.accepted_at FROM event_members
-        LEFT JOIN events ON event_members.id_event = events.id WHERE events.id = ".$_GET['id']." ORDER BY `event_members`.`created_at` ");
+          events.name as eventname, event_members.token, event_members.team, event_members.name as username, event_members.surname,users.photo, event_members.accepted_at FROM event_members
+        LEFT JOIN events ON event_members.id_event = events.id LEFT JOIN users on users.id=event_members.id_user  WHERE events.id = ".$_GET['id']." ORDER BY `event_members`.`created_at` ");
         if (!$q) {
           die($mysqli->error);
         }
@@ -149,15 +162,23 @@
           if (empty($r['username']) && empty($r['surname'])) {
             $nam = 'Участник события';
           }
+
+          $ph = "";
+          if (!empty($r['photo'])) {
+            $ph .= '<img src="'.$r['photo'].'" class="userpic">';
+          }
+
           echo '
           <div class="ololo">
             <div class="main">
               <aside>
                 <img
+                class="qr"
                   src="https://chart.apis.google.com/chart?cht=qr&chs=350x350&chl=https://sn.fednik.ru/registration/?invite='.$r['token'].'"
                   alt="'.$r['token'].'"
                 >
-                <span>участник №&thinsp;'.$i.'</span>
+                '.$ph.'
+                <span><small>участник</small> №&thinsp;'.$i.'</span>
               </aside>
               <article>
                 <small>'.$r['eventname'].'</small>
