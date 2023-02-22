@@ -15,6 +15,7 @@
         font-family:  'Arial narrow', arial;
       }
       .ololo {
+        page-break-inside : avoid;
         height: 44mm;
         min-height: 44mm;
         max-height: 44mm;
