@@ -1,7 +1,9 @@
 DirectoryIndex index.html index.php index
 DirectoryIndex index.html
 <IfModule mod_rewrite.c>
-
+  RewriteRule ^oauth/(.*)  - [L]
+  RewriteRule ^admin/(.*)  - [L]
+  RewriteRule ^registration/(.*)  - [L]
   RewriteEngine On
   RewriteBase /
   RewriteRule ^index\.html$ - [L]
