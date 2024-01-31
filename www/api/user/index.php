@@ -41,7 +41,7 @@
 
 
 			$file = __DIR__.'/sql/getUserData.sql';
-			$sql = getSql($file, array('id_user' => $uid));
+			$sql = getSql($file, array('id_user' => isset($_GET['id']) ? intval($_GET['id']) : $uid));
 			$q = $mysqli->query($sql);
 			if (!$q) { die(err('Error reading user data', array('message' => $mysqli->error, 'sql' => $sql, 'file'=>$file))); }
 			$r = $q->fetch_assoc();

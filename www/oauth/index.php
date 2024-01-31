@@ -3,7 +3,7 @@
         die('Wrong token');
     }
 
-	require_once('../_includes/db.php');
+	  require_once('../_includes/db.php');
     require_once('../_includes/ip.php');
 
     $client_id = '1';
@@ -116,9 +116,6 @@
             if (!$q) { die($mysqli -> error); }
         }
 
-
-
-
         $authdata = array(
             'id' => $user_id,
             'token' => $_GET['token'],
@@ -133,5 +130,5 @@
         if (isset($_GET['redir'])) {
             header('Location: '.$_GET['redir']."?token=".$_GET['token']."&expiration=".(time() + (86400 * 30))."&id=".$user_id);
         } else {
-        die(json_encode($authdata));
+            die(json_encode($authdata));
         }

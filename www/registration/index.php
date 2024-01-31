@@ -27,7 +27,7 @@
   }
 
   if (empty($id_event)) {
-    die('Wrong event (incorrect id)');
+    die('Wrong event (incorrect id)/ Add ?event=1');
   }
 
   $file = __DIR__ . '/sql/event_by_id.sql';
